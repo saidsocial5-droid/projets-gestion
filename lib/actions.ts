@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { generateKeyBetween } from "fractional-indexing";
 import { createClient } from "./supabase/server";
 import { getSession } from "./session";
 import { toActionError, type ActionResult } from "./errors";
 import type { Priority } from "./types";
+import { appOrigin, sendSignInEmail } from "./mail";
 
 const PRIORITIES: Priority[] = ["low", "medium", "high", "urgent"];
 
@@ -23,8 +23,7 @@ export async function sendMagicLink(_prev: unknown, form: FormData): Promise<{ s
   const email = str(form, "email").toLowerCase();
   const locale = str(form, "locale") === "fr" ? "fr" : "ar";
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { status: "error" };
-  const h = await headers();
-  const origin = h.get("origin") ?? `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
+  const origin = await appOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
@@ -174,22 +173,122 @@ export async function deleteTask(id: string): Promise<ActionResult> {
 }
 
 // ---------------------------------------------------------------------------
-// members (M1: invitation is claimed on first sign-in with that email)
+// members and guests (M2b). An invitation is claimed when the invitee first
+// signs in with that email; the sign-in email is sent right away.
 // ---------------------------------------------------------------------------
 
-export async function inviteMember(_prev: unknown, form: FormData): Promise<{ status: "idle" | "ok" | "error" }> {
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+type FormResult = { status: "idle" | "ok" | "error"; message?: string };
+
+function lastAdmin(e: { hint?: string } | null) {
+  return e?.hint === "last_admin";
+}
+
+export async function inviteMember(_prev: unknown, form: FormData): Promise<FormResult> {
   const session = await getSession();
   if (!session || session.role !== "admin") return { status: "error" };
   const email = str(form, "email").toLowerCase();
   const role = str(form, "role");
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !["admin", "member", "guest"].includes(role)) return { status: "error" };
+  const locale = str(form, "locale") === "fr" ? "fr" : "ar";
+  if (!EMAIL_RE.test(email) || !["admin", "member", "guest"].includes(role)) return { status: "error" };
   const supabase = await createClient();
-  const { error } = await supabase.from("invitations").insert({
-    workspace_id: session.workspaceId, email, workspace_role: role,
-  });
-  if (error) return { status: "error" };
+  const { error } = await supabase.from("invitations").insert({ workspace_id: session.workspaceId, email, workspace_role: role });
+  if (error) return { status: "error", message: error.code === "23505" ? "already_invited" : undefined };
+  await sendSignInEmail(email, locale);
   revalidatePath("/", "layout");
   return { status: "ok" };
+}
+
+/** Invites someone by email to one project: a guest of the workspace with a project role. */
+export async function inviteToProject(projectId: string, _prev: unknown, form: FormData): Promise<FormResult> {
+  const session = await getSession();
+  if (!session) return { status: "error" };
+  const email = str(form, "email").toLowerCase();
+  const role = str(form, "role");
+  const locale = str(form, "locale") === "fr" ? "fr" : "ar";
+  if (!EMAIL_RE.test(email) || !["admin", "editor", "commenter", "viewer"].includes(role)) return { status: "error" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("invitations").insert({
+    workspace_id: session.workspaceId, email, workspace_role: "guest", project_id: projectId, project_role: role,
+  });
+  if (error) return { status: "error", message: error.code === "23505" ? "already_invited" : undefined };
+  await sendSignInEmail(email, locale);
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function revokeInvitation(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("invitations").update({ revoked_at: new Date().toISOString() }).eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function setWorkspaceRole(userId: string, role: string): Promise<ActionResult | { ok: false; error: "last_admin" }> {
+  const session = await getSession();
+  if (!session || !["admin", "member", "guest"].includes(role)) return { ok: false, error: "forbidden" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("workspace_members").update({ role }).eq("workspace_id", session.workspaceId).eq("user_id", userId).select("user_id");
+  if (lastAdmin(error)) return { ok: false, error: "last_admin" };
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function removeWorkspaceMember(userId: string): Promise<ActionResult | { ok: false; error: "last_admin" }> {
+  const session = await getSession();
+  if (!session) return { ok: false, error: "forbidden" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("workspace_members").delete().eq("workspace_id", session.workspaceId).eq("user_id", userId).select("user_id");
+  if (lastAdmin(error)) return { ok: false, error: "last_admin" };
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function updateProject(projectId: string, _prev: unknown, form: FormData): Promise<FormResult> {
+  const name = str(form, "name");
+  const privacy = str(form, "privacy");
+  if (!name || name.length > 200 || !["private", "workspace"].includes(privacy)) return { status: "error" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").update({ name, privacy, due_date: str(form, "due_date") || null }).eq("id", projectId).select("id");
+  if (error || !data.length) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function addProjectMember(projectId: string, userId: string, role: string): Promise<ActionResult> {
+  if (!["admin", "editor", "commenter", "viewer"].includes(role)) return { ok: false, error: "generic" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("project_members").upsert({ project_id: projectId, user_id: userId, role });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function setProjectMemberRole(projectId: string, userId: string, role: string): Promise<ActionResult | { ok: false; error: "last_admin" }> {
+  if (!["admin", "editor", "commenter", "viewer"].includes(role)) return { ok: false, error: "generic" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("project_members").update({ role }).eq("project_id", projectId).eq("user_id", userId).select("user_id");
+  if (lastAdmin(error)) return { ok: false, error: "last_admin" };
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function removeProjectMember(projectId: string, userId: string): Promise<ActionResult | { ok: false; error: "last_admin" }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("project_members").delete().eq("project_id", projectId).eq("user_id", userId).select("user_id");
+  if (lastAdmin(error)) return { ok: false, error: "last_admin" };
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
 }
 
 // ---------------------------------------------------------------------------

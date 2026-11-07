@@ -3,27 +3,30 @@ import { expect, type Page } from "@playwright/test";
 
 const MAILPIT = process.env.MAILPIT_URL ?? "http://127.0.0.1:54324";
 
-/** Signs in through the real magic-link flow, reading the email from the local Mailpit inbox. */
-export async function signIn(page: Page, email: string, locale = "ar") {
-  const since = Date.now();
-  await page.goto(`/${locale}/login`);
-  await page.locator('input[name="email"]').fill(email);
-  await page.locator('form button').click();
-  await expect(page.getByRole("status")).toBeVisible();
-
-  let link: string | undefined;
-  for (let i = 0; i < 30 && !link; i++) {
+/** Waits for the newest sign-in email to `email` sent after `since` and returns its link. */
+export async function emailLink(email: string, since: number): Promise<string> {
+  for (let i = 0; i < 30; i++) {
     const res = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`);
     const { messages } = (await res.json()) as { messages: { ID: string; Created: string }[] };
     const fresh = messages.find((m) => new Date(m.Created).getTime() >= since - 2000);
     if (fresh) {
-      const msg = (await (await fetch(`${MAILPIT}/api/v1/message/${fresh.ID}`)).json()) as { Text: string; HTML: string };
-      link = (msg.HTML.match(/href="([^"]*verify[^"]*)"/)?.[1] ?? msg.Text.match(/(http\S*verify\S*)/)?.[1])?.replace(/&amp;/g, "&");
+      const msg = (await (await fetch(`${MAILPIT}/api/v1/message/${fresh.ID}`)).json()) as { HTML: string };
+      const link = msg.HTML.match(/href="([^"]*token_hash[^"]*)"/)?.[1]?.replace(/&amp;/g, "&");
+      if (link) return link;
     }
-    if (!link) await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500));
   }
-  if (!link) throw new Error(`no magic link for ${email}`);
-  await page.goto(link);
+  throw new Error(`no sign-in email for ${email}`);
+}
+
+/** Signs in through the real email-link flow, reading the email from the local Mailpit inbox. */
+export async function signIn(page: Page, email: string, locale = "ar") {
+  const since = Date.now();
+  await page.goto(`/${locale}/login`);
+  await page.locator('input[name="email"]').fill(email);
+  await page.locator("form button").click();
+  await expect(page.getByRole("status")).toBeVisible();
+  await page.goto(await emailLink(email, since));
 }
 
 /** Drags a board card onto a column using real pointer events (dnd-kit needs movement past its 6px threshold). */

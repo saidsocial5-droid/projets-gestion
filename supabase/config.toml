@@ -245,6 +245,17 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Login and first sign-up use the same token_hash link, verified server side
+# in /auth/callback (works from any browser, no PKCE verifier needed).
+# Production: paste the same template in Dashboard > Authentication > Emails.
+[auth.email.template.magic_link]
+subject = "الدخول إلى منصة مشاريع AFMI / Connexion"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.confirmation]
+subject = "الدخول إلى منصة مشاريع AFMI / Connexion"
+content_path = "./supabase/templates/magic_link.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

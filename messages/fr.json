@@ -16,7 +16,7 @@
     "title": "Connexion",
     "email": "Adresse e-mail",
     "submit": "Recevoir le lien de connexion",
-    "sent": "Lien envoyé. Ouvrez-le depuis ce navigateur.",
+    "sent": "Lien envoyé. Ouvrez l'e-mail et cliquez sur le lien.",
     "error": "Impossible d'envoyer le lien. Réessayez.",
     "inviteOnly": "Accès sur invitation uniquement."
   },
@@ -93,14 +93,20 @@
     "role_guest": "Invité",
     "send": "Inviter",
     "pending": "Invitations en attente",
-    "pendingHint": "La personne obtient l'accès à sa première connexion avec cette adresse.",
-    "invited": "Invitation enregistrée"
+    "pendingHint": "Chaque invité a reçu un lien de connexion. L'accès est activé à la première connexion.",
+    "invited": "Invitation enregistrée",
+    "alreadyInvited": "Cette adresse est déjà invitée.",
+    "revoke": "Annuler l'invitation",
+    "remove": "Retirer",
+    "confirmRemove": "Retirer cette personne de l'association ?",
+    "you": "(vous)"
   },
   "errors": {
     "transition_not_allowed": "Cette transition n'est pas autorisée par le workflow.",
     "forbidden": "Vous n'avez pas le droit de faire cette action.",
     "conflict": "Quelqu'un d'autre a modifié cette tâche. Actualisez la page.",
-    "generic": "Une erreur est survenue. Réessayez."
+    "generic": "Une erreur est survenue. Réessayez.",
+    "last_admin": "Il doit rester au moins un administrateur."
   },
   "activity": {
     "task": {
@@ -150,5 +156,27 @@
     "projects": "Mes projets",
     "allProjects": "Tous les projets",
     "overdueCount": "{count} tâche(s) en retard"
+  },
+  "projectSettings": {
+    "tab": "Paramètres",
+    "title": "Paramètres du projet",
+    "general": "Général",
+    "save": "Enregistrer",
+    "saved": "Enregistré",
+    "members": "Membres du projet",
+    "membersHint": "Les membres de l'association voient les projets publics automatiquement. Ajoutez ici ceux qui ont besoin d'un rôle précis, ou invitez une personne externe.",
+    "add": "Ajouter",
+    "addMember": "Ajouter un membre de l'association",
+    "choose": "Choisir une personne…",
+    "inviteGuest": "Inviter une personne externe (partenaire, bailleur…)",
+    "guestHint": "Un invité ne voit que ce projet, ni les dépenses ni les bailleurs.",
+    "invite": "Inviter",
+    "invited": "Invitation envoyée",
+    "role_admin": "Admin du projet",
+    "role_editor": "Éditeur",
+    "role_commenter": "Commentateur",
+    "role_viewer": "Lecteur",
+    "guest": "Invité",
+    "pending": "Invitations en attente"
   }
 }
