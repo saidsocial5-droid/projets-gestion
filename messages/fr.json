@@ -10,7 +10,8 @@
     "language": "العربية",
     "home": "Accueil",
     "myTasks": "Mes tâches",
-    "inbox": "Notifications"
+    "inbox": "Notifications",
+    "portfolio": "Portefeuille"
   },
   "login": {
     "title": "Connexion",
@@ -45,7 +46,9 @@
     "addTask": "Ajouter une tâche…",
     "addSection": "Nouvelle section…",
     "emptySection": "Aucune tâche dans cette section.",
-    "emptyColumn": "Glissez une tâche ici"
+    "emptyColumn": "Glissez une tâche ici",
+    "progress": "Avancement",
+    "dashboard": "Suivi"
   },
   "task": {
     "title": "Titre",
@@ -178,5 +181,54 @@
     "role_viewer": "Lecteur",
     "guest": "Invité",
     "pending": "Invitations en attente"
+  },
+  "health": {
+    "on_track": "En bonne voie",
+    "at_risk": "À risque",
+    "off_track": "En retard",
+    "on_hold": "En pause",
+    "complete": "Terminé",
+    "none": "Aucun point"
+  },
+  "progress": {
+    "title": "Points d'avancement",
+    "new": "Nouveau point",
+    "status": "Statut",
+    "headline": "Titre",
+    "body": "Qu'est-ce qui a avancé ? Quels blocages ? Prochaine étape ?",
+    "publish": "Publier",
+    "draft": "Enregistrer le brouillon",
+    "drafts": "Mes brouillons",
+    "publishDraft": "Publier le brouillon",
+    "delete": "Supprimer",
+    "empty": "Aucun point pour l'instant. Publiez le premier pour informer l'équipe.",
+    "by": "{name} · {date}",
+    "snapshot": "{done} sur {total} tâches terminées · {overdue} en retard",
+    "published": "Enregistré"
+  },
+  "dashboard": {
+    "total": "Toutes les tâches",
+    "done": "Terminées",
+    "overdue": "En retard",
+    "dueWeek": "À rendre cette semaine",
+    "byStatus": "Tâches par statut",
+    "byAssignee": "Tâches ouvertes par responsable",
+    "weekly": "Tâches terminées par semaine",
+    "weekOf": "Semaine du {date}",
+    "unassigned": "Non assignée",
+    "asTable": "Voir en tableau",
+    "tasks": "{count} tâche(s)",
+    "empty": "Aucune tâche pour l'instant."
+  },
+  "portfolio": {
+    "title": "Portefeuille de projets",
+    "project": "Projet",
+    "health": "Statut",
+    "progress": "Avancement",
+    "overdue": "En retard",
+    "owner": "Responsable",
+    "due": "Fin",
+    "updated": "Dernier point",
+    "empty": "Aucun projet pour l'instant."
   }
 }

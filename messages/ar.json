@@ -10,7 +10,8 @@
     "language": "Français",
     "home": "الرئيسية",
     "myTasks": "مهامي",
-    "inbox": "الإشعارات"
+    "inbox": "الإشعارات",
+    "portfolio": "المحفظة"
   },
   "login": {
     "title": "تسجيل الدخول",
@@ -45,7 +46,9 @@
     "addTask": "أضف مهمة…",
     "addSection": "قسم جديد…",
     "emptySection": "لا مهام في هذا القسم.",
-    "emptyColumn": "اسحب مهمة إلى هنا"
+    "emptyColumn": "اسحب مهمة إلى هنا",
+    "progress": "التقدّم",
+    "dashboard": "المتابعة"
   },
   "task": {
     "title": "العنوان",
@@ -178,5 +181,54 @@
     "role_viewer": "مشاهد",
     "guest": "ضيف",
     "pending": "دعوات في الانتظار"
+  },
+  "health": {
+    "on_track": "على المسار",
+    "at_risk": "في خطر",
+    "off_track": "متأخر",
+    "on_hold": "معلّق",
+    "complete": "مكتمل",
+    "none": "بلا تحديث"
+  },
+  "progress": {
+    "title": "تحديثات الحالة",
+    "new": "تحديث جديد",
+    "status": "الحالة",
+    "headline": "العنوان",
+    "body": "ما الذي تحقق؟ ما العوائق؟ ما الخطوة التالية؟",
+    "publish": "نشر",
+    "draft": "حفظ كمسودة",
+    "drafts": "مسوداتي",
+    "publishDraft": "نشر المسودة",
+    "delete": "حذف",
+    "empty": "لا تحديثات بعد. انشر أول تحديث ليعرف الفريق أين وصل المشروع.",
+    "by": "{name} · {date}",
+    "snapshot": "{done} من {total} مهمة منجزة · {overdue} متأخرة",
+    "published": "تم الحفظ"
+  },
+  "dashboard": {
+    "total": "كل المهام",
+    "done": "منجزة",
+    "overdue": "متأخرة",
+    "dueWeek": "تُستحق هذا الأسبوع",
+    "byStatus": "المهام حسب الحالة",
+    "byAssignee": "المهام المفتوحة حسب المسؤول",
+    "weekly": "المهام المنجزة أسبوعياً",
+    "weekOf": "أسبوع {date}",
+    "unassigned": "غير مسند",
+    "asTable": "عرض كجدول",
+    "tasks": "{count} مهمة",
+    "empty": "لا مهام بعد."
+  },
+  "portfolio": {
+    "title": "محفظة المشاريع",
+    "project": "المشروع",
+    "health": "الحالة",
+    "progress": "الإنجاز",
+    "overdue": "متأخرة",
+    "owner": "المسؤول",
+    "due": "الانتهاء",
+    "updated": "آخر تحديث",
+    "empty": "لا مشاريع بعد."
   }
 }

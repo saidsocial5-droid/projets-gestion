@@ -377,3 +377,42 @@ export async function markAllNotificationsRead(): Promise<void> {
   await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", session.userId).is("read_at", null);
   revalidatePath("/", "layout");
 }
+
+// ---------------------------------------------------------------------------
+// status updates (M2c)
+// ---------------------------------------------------------------------------
+
+const HEALTH = ["on_track", "at_risk", "off_track", "on_hold", "complete"];
+
+export async function saveStatusUpdate(projectId: string, _prev: unknown, form: FormData): Promise<{ status: "idle" | "ok" | "error"; at?: number }> {
+  const status = str(form, "status");
+  const title = str(form, "title");
+  const text = str(form, "body");
+  const publish = str(form, "intent") !== "draft";
+  if (!HEALTH.includes(status) || !title || title.length > 200 || text.length > 20000) return { status: "error" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("status_updates").insert({
+    project_id: projectId, status, title, body: { text }, published_at: publish ? new Date().toISOString() : null,
+  });
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok", at: Date.now() };
+}
+
+export async function publishStatusUpdate(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("status_updates").update({ published_at: new Date().toISOString() }).eq("id", id).is("published_at", null).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteStatusUpdate(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("status_updates").delete().eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

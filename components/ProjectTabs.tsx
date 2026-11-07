@@ -2,15 +2,17 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 
-export function ProjectTabs({ id, labels, showSettings }: { id: string; labels: { list: string; board: string; settings: string }; showSettings: boolean }) {
+export function ProjectTabs({ id, labels, showSettings }: { id: string; labels: { list: string; board: string; progress: string; dashboard: string; settings: string }; showSettings: boolean }) {
   const path = usePathname();
   const tabs = [
     { href: `/p/${id}/list`, label: labels.list },
     { href: `/p/${id}/board`, label: labels.board },
+    { href: `/p/${id}/dashboard`, label: labels.dashboard },
+    { href: `/p/${id}/progress`, label: labels.progress },
     ...(showSettings ? [{ href: `/p/${id}/settings`, label: labels.settings }] : []),
   ];
   return (
-    <nav className="flex gap-1 rounded-lg bg-black/5 p-1 text-sm dark:bg-white/10">
+    <nav className="flex max-w-full gap-1 overflow-x-auto rounded-lg bg-black/5 p-1 text-sm dark:bg-white/10">
       {tabs.map((tab) => (
         <Link
           key={tab.href}

@@ -36,6 +36,7 @@ export default async function AppLayout({ children, params }: { children: React.
             {unread > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-xs text-white" aria-label={`${unread}`}>{unread}</span>}
           </Link>
           <Link href="/projects" className="btn-ghost">{t("projects")}</Link>
+          {session!.role !== "guest" && <Link href="/portfolio" className="btn-ghost">{t("portfolio")}</Link>}
           {session!.role === "admin" && <Link href="/settings/members" className="btn-ghost">{t("members")}</Link>}
         </nav>
         <div className="ms-auto flex items-center gap-1 text-sm">
