@@ -7,6 +7,7 @@ import type { Person } from "@/lib/types";
 import { getSession } from "@/lib/session";
 import { workspaceFields } from "@/lib/fields";
 import { ProjectFieldsPicker } from "@/components/FieldsAdmin";
+import { ProjectLifecycle } from "@/components/ProjectLifecycle";
 
 export default async function ProjectSettingsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,7 +16,7 @@ export default async function ProjectSettingsPage({ params }: { params: Promise<
   if (!isAdmin) notFound();
   const t = await getTranslations();
 
-  const { data: project } = await supabase.from("projects").select("id, name, privacy, due_date, start_date, donor_id, budget_cents, currency, workspace_id").eq("id", id).single();
+  const { data: project } = await supabase.from("projects").select("id, name, privacy, due_date, start_date, donor_id, budget_cents, currency, workspace_id, is_template, archived_at").eq("id", id).single();
   const session = (await getSession())!;
   const [{ data: members }, { data: staff }, { data: invites }, { data: donors }, fields, { data: attached }] = await Promise.all([
     supabase.from("project_members").select("role, profiles(id, full_name)").eq("project_id", id).order("created_at"),
@@ -76,6 +77,14 @@ export default async function ProjectSettingsPage({ params }: { params: Promise<
           </div>
         )}
       </section>
+      {session.role !== "guest" && (
+        <section className="space-y-2">
+          <h2 className="font-medium">{t("templates.lifecycle")}</h2>
+          <div className="surface rounded-xl p-4">
+            <ProjectLifecycle projectId={id} name={project!.name} archived={!!project!.archived_at} isTemplate={project!.is_template} />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

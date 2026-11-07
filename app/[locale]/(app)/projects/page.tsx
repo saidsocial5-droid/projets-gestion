@@ -18,14 +18,19 @@ interface Progress {
   tasks_overdue: number;
 }
 
-export default async function ProjectsPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+export default async function ProjectsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ view?: string }> }) {
+  const [{ locale }, { view: rawView }] = await Promise.all([params, searchParams]);
+  const view = rawView === "templates" || rawView === "archived" ? rawView : "active";
+  const tt = await getTranslations("templates");
   const t = await getTranslations("projects");
   const session = await getSession();
   const supabase = await createClient();
-  const [{ data: projects }, { data: progress }] = await Promise.all([
-    supabase.from("projects").select("id, name, privacy, due_date").is("archived_at", null).eq("is_template", false).order("created_at", { ascending: false }),
+  let q = supabase.from("projects").select("id, name, privacy, due_date").order("created_at", { ascending: false });
+  q = view === "templates" ? q.eq("is_template", true) : view === "archived" ? q.eq("is_template", false).not("archived_at", "is", null) : q.eq("is_template", false).is("archived_at", null);
+  const [{ data: projects }, { data: progress }, { data: templates }] = await Promise.all([
+    q,
     supabase.from("project_progress").select("project_id, tasks_total, tasks_done, tasks_overdue"),
+    supabase.from("projects").select("id, name").eq("is_template", true).order("name"),
   ]);
   const byId = new Map(((progress ?? []) as Progress[]).map((p) => [p.project_id, p]));
   const rows = (projects ?? []) as Row[];
@@ -35,9 +40,18 @@ export default async function ProjectsPage({ params }: { params: Promise<{ local
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">{t("title")}</h1>
       </div>
-      {session?.role !== "guest" && <NewProjectForm />}
+      {session?.role !== "guest" && (
+        <nav aria-label={t("title")} className="flex gap-1 text-sm">
+          {(["active", "templates", "archived"] as const).map((v) => (
+            <Link key={v} href={v === "active" ? "/projects" : `/projects?view=${v}`} aria-current={view === v ? "page" : undefined} className={`rounded-md px-3 py-1 ${view === v ? "surface font-medium shadow-sm" : "text-muted hover:bg-black/5 dark:hover:bg-white/10"}`}>
+              {v === "active" ? tt("active") : v === "templates" ? tt("tab") : tt("archived")}
+            </Link>
+          ))}
+        </nav>
+      )}
+      {session?.role !== "guest" && view === "active" && <NewProjectForm templates={templates ?? []} />}
       {rows.length === 0 ? (
-        <p className="surface rounded-xl p-8 text-center text-muted">{t("empty")}</p>
+        <p className="surface rounded-xl p-8 text-center text-muted">{view === "templates" ? tt("empty") : view === "archived" ? tt("emptyArchived") : t("empty")}</p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => {

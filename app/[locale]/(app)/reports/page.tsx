@@ -14,7 +14,7 @@ export default async function ReportsPage({ params }: { params: Promise<{ locale
   const [{ data: reports }, { data: donors }, { data: projects }] = await Promise.all([
     supabase.from("reports").select("id, title, period_start, period_end, locale, donor:donors(name)").order("created_at", { ascending: false }),
     supabase.from("donors").select("id, name").order("name"),
-    supabase.from("projects").select("id, name, donor_id").is("archived_at", null).eq("is_template", false).order("name"),
+    supabase.from("projects").select("id, name, donor_id").eq("is_template", false).order("name"),
   ]);
   const today = todayInMorocco();
   const rows = (reports ?? []) as unknown as { id: string; title: string; period_start: string; period_end: string; locale: string; donor: { name: string } | null }[];

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { createProject } from "@/lib/actions";
 
-export function NewProjectForm() {
+export function NewProjectForm({ templates }: { templates: { id: string; name: string }[] }) {
   const t = useTranslations();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -41,6 +41,15 @@ export function NewProjectForm() {
         <span className="text-sm font-medium">{t("projects.dueDate")}</span>
         <input name="due_date" type="date" className="input" />
       </label>
+      {templates.length > 0 && (
+        <label className="space-y-1 sm:col-span-4">
+          <span className="text-sm font-medium">{t("templates.template")}</span>
+          <select name="template_id" className="input">
+            <option value="">{t("templates.blank")}</option>
+            {templates.map((tp) => <option key={tp.id} value={tp.id}>{tp.name}</option>)}
+          </select>
+        </label>
+      )}
       <button className="btn-primary" disabled={pending}>{t("projects.create")}</button>
       {error && <p role="alert" className="text-sm text-rose-600 sm:col-span-4">{error}</p>}
     </form>

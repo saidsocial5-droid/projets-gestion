@@ -446,5 +446,25 @@
     "members": "Inviter membres et invités, gérer les rôles",
     "workflow": "Statuts et transitions autorisées",
     "fields": "Champs supplémentaires sur les tâches"
+  },
+  "templates": {
+    "template": "Modèle",
+    "blank": "Projet vide",
+    "tab": "Modèles",
+    "active": "Actifs",
+    "archived": "Archivés",
+    "saveAs": "Enregistrer comme modèle",
+    "saveAsHint": "Copie sections, tâches, sous-tâches, dépendances, champs et indicateurs, sans les personnes, dates, dépenses ni commentaires.",
+    "templateName": "Nom du modèle",
+    "isTemplate": "Ceci est un modèle. Les projets créés à partir de lui copient sa structure.",
+    "deleteTemplate": "Supprimer le modèle",
+    "confirmDeleteTemplate": "Supprimer ce modèle ? Les projets déjà créés ne changent pas.",
+    "empty": "Aucun modèle. Ouvrez un projet réussi et enregistrez-le comme modèle depuis ses paramètres.",
+    "archive": "Archiver le projet",
+    "unarchive": "Désarchiver",
+    "archiveHint": "Un projet archivé disparaît des listes, du portefeuille et de « Mes tâches », mais reste consultable et utilisable dans les rapports.",
+    "isArchived": "Ce projet est archivé.",
+    "emptyArchived": "Aucun projet archivé.",
+    "lifecycle": "Cycle de vie du projet"
   }
 }

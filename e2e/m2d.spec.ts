@@ -29,7 +29,7 @@ test("M2d funding: donor, budget, indicator, expense, donor report (print + Exce
   await a.getByRole("link", { name: "الإعدادات" }).last().click();
   await a.getByLabel("المانح").selectOption({ label: donor });
   await a.getByLabel(/^الميزانية/).fill("50 000");
-  await a.getByRole("button", { name: "حفظ" }).click();
+  await a.getByRole("button", { name: "حفظ", exact: true }).click();
   await expect(a.getByRole("status")).toHaveText("تم الحفظ");
 
   // indicator and expense

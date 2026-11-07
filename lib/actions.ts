@@ -54,6 +54,7 @@ export async function createProject(form: FormData): Promise<ActionResult<string
     p_privacy: privacy,
     p_due_date: due,
     p_section_name: str(form, "section_name") || "المهام",
+    p_template: str(form, "template_id") || null,
   });
   if (error) return { ok: false, error: toActionError(error) };
   revalidatePath("/", "layout");
@@ -694,6 +695,39 @@ export async function setFieldValue(taskId: string, fieldId: string, value: stri
     ? await supabase.from("task_field_values").delete().eq("task_id", taskId).eq("field_id", fieldId)
     : await supabase.from("task_field_values").upsert({ task_id: taskId, field_id: fieldId, value });
   if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// templates and archiving (M3c)
+// ---------------------------------------------------------------------------
+
+export async function saveAsTemplate(projectId: string, name: string): Promise<ActionResult<string>> {
+  name = name.trim();
+  if (!name || name.length > 200) return { ok: false, error: "generic" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("save_as_template", { p_project: projectId, p_name: name });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true, data: data as string };
+}
+
+export async function setArchived(projectId: string, archived: boolean): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").update({ archived_at: archived ? new Date().toISOString() : null }).eq("id", projectId).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/** Deletes a template (projects with real work are archived, not deleted). */
+export async function deleteTemplate(projectId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("projects").delete().eq("id", projectId).eq("is_template", true).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
   revalidatePath("/", "layout");
   return { ok: true };
 }

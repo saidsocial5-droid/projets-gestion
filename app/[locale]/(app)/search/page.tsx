@@ -14,8 +14,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const ok = q.length >= 2;
   const [{ data: tasks }, { data: projects }] = ok
     ? await Promise.all([
-        supabase.from("tasks").select("id, title, parent_task_id, completed_at, project:projects(id, name)").ilike("title", like(q)).order("updated_at", { ascending: false }).limit(30),
-        supabase.from("projects").select("id, name").ilike("name", like(q)).limit(10),
+        supabase.from("tasks").select("id, title, parent_task_id, completed_at, project:projects!inner(id, name, is_template)").eq("project.is_template", false).ilike("title", like(q)).order("updated_at", { ascending: false }).limit(30),
+        supabase.from("projects").select("id, name").eq("is_template", false).ilike("name", like(q)).limit(10),
       ])
     : [{ data: [] }, { data: [] }];
   const taskRows = (tasks ?? []) as unknown as { id: string; title: string; parent_task_id: string | null; completed_at: string | null; project: { id: string; name: string } }[];

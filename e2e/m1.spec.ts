@@ -54,6 +54,7 @@ test("M1 vertical slice: sign in, create, move, workflow refusal, second user, F
   // an allowed move sticks after reload
   await dragCard(a, task, "قيد التنفيذ");
   await expect(a.getByRole("region", { name: "قيد التنفيذ", exact: true }).getByText(task)).toBeVisible();
+  await a.waitForLoadState("networkidle"); // the move is optimistic: let the server action finish first
   await a.reload();
   await expect(a.getByRole("region", { name: "قيد التنفيذ", exact: true }).getByText(task)).toBeVisible();
   if (shots) await a.screenshot({ path: `${shots}/board-ar.png` });
