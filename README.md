@@ -8,7 +8,7 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 ## الحالة / État
 
 - [x] المرحلة 1: الاستطلاع (recon) — `replica/recon.md`، `replica/features.csv`
-- [ ] المرحلة 2: الهندسة (التقنيات، قاعدة البيانات، الواجهات البرمجية)
+- [x] المرحلة 2: الهندسة — `replica/architecture.md`، `replica/schema.sql` (29 جدولاً، مُختبَر)
 - [ ] المرحلة 3: نظام التصميم
 - [ ] المرحلة 4: البناء
 
@@ -18,4 +18,14 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 | --- | --- |
 | `replica/recon.md` | النطاق، المصادر، 21 شاشة، 9 مسارات، المكوّنات، نموذج البيانات، الحجم |
 | `replica/features.csv` | مصفوفة 62 ميزة مع الأولوية وحالة التنفيذ |
+| `replica/architecture.md` | التقنيات، الواجهات البرمجية، المخاطر، ترتيب البناء |
+| `replica/schema.sql` | مخطط Postgres/Supabase مع RLS |
+| `replica/tests/` | اختبارات المخطط (صلاحيات، سير العمل، تبعيات) |
 | `replica/screens/` | لقطات مرجعية (لا تُنشر في التطبيق) |
+
+## اختبار المخطط / Tester le schéma
+
+```bash
+createdb t
+psql -d t -f replica/tests/supabase-stub.sql -f replica/schema.sql -f replica/tests/schema.test.sql
+```
