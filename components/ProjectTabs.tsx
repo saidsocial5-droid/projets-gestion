@@ -2,11 +2,12 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 
-export function ProjectTabs({ id, labels, showSettings, showFunding }: { id: string; labels: { list: string; board: string; progress: string; dashboard: string; funding: string; settings: string }; showSettings: boolean; showFunding: boolean }) {
+export function ProjectTabs({ id, labels, showSettings, showFunding }: { id: string; labels: { list: string; board: string; timeline: string; progress: string; dashboard: string; funding: string; settings: string }; showSettings: boolean; showFunding: boolean }) {
   const path = usePathname();
   const tabs = [
     { href: `/p/${id}/list`, label: labels.list },
     { href: `/p/${id}/board`, label: labels.board },
+    { href: `/p/${id}/timeline`, label: labels.timeline },
     { href: `/p/${id}/dashboard`, label: labels.dashboard },
     { href: `/p/${id}/progress`, label: labels.progress },
     ...(showFunding ? [{ href: `/p/${id}/funding`, label: labels.funding }] : []),

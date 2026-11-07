@@ -116,6 +116,7 @@ export interface TaskPatch {
   title?: string;
   status_id?: string;
   assignee_id?: string | null;
+  start_date?: string | null;
   due_date?: string | null;
   priority?: Priority | null;
   description?: string;
@@ -132,6 +133,7 @@ export async function updateTask(id: string, patch: TaskPatch, prevUpdatedAt: st
   if (patch.status_id !== undefined) row.status_id = patch.status_id;
   if (patch.assignee_id !== undefined) row.assignee_id = patch.assignee_id || null;
   if (patch.due_date !== undefined) row.due_date = patch.due_date || null;
+  if (patch.start_date !== undefined) row.start_date = patch.start_date || null;
   if (patch.priority !== undefined) row.priority = patch.priority && PRIORITIES.includes(patch.priority) ? patch.priority : null;
   if (patch.description !== undefined) row.description = { text: patch.description };
 
@@ -593,4 +595,25 @@ export async function updateProfile(_prev: unknown, form: FormData): Promise<For
   if (error) return { status: "error" };
   revalidatePath("/", "layout");
   return { status: "ok", locale };
+}
+
+// ---------------------------------------------------------------------------
+// dependencies (M3a)
+// ---------------------------------------------------------------------------
+
+export async function addDependency(taskId: string, dependsOn: string): Promise<ActionResult> {
+  if (taskId === dependsOn) return { ok: false, error: "dependency_cycle" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("task_dependencies").insert({ task_id: taskId, depends_on_task_id: dependsOn });
+  if (error && error.code !== "23505") return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function removeDependency(taskId: string, dependsOn: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("task_dependencies").delete().eq("task_id", taskId).eq("depends_on_task_id", dependsOn);
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
 }

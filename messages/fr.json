@@ -54,7 +54,8 @@
     "emptyColumn": "Glissez une tâche ici",
     "progress": "Avancement",
     "dashboard": "Suivi",
-    "funding": "Financement"
+    "funding": "Financement",
+    "timeline": "Chronologie"
   },
   "task": {
     "title": "Titre",
@@ -90,7 +91,8 @@
     "unfollow": "Ne plus suivre",
     "activity": "Historique",
     "deleteComment": "Supprimer",
-    "deleteFile": "Supprimer le fichier"
+    "deleteFile": "Supprimer le fichier",
+    "startDate": "Date de début"
   },
   "members": {
     "title": "Membres de l'association",
@@ -116,7 +118,8 @@
     "conflict": "Quelqu'un d'autre a modifié cette tâche. Actualisez la page.",
     "generic": "Une erreur est survenue. Réessayez.",
     "last_admin": "Il doit rester au moins un administrateur.",
-    "min_statuses": "Un workflow doit garder au moins deux statuts."
+    "min_statuses": "Un workflow doit garder au moins deux statuts.",
+    "dependency_cycle": "Cette dépendance créerait une boucle."
   },
   "activity": {
     "task": {
@@ -376,5 +379,25 @@
     "email": "E-mail",
     "save": "Enregistrer",
     "saved": "Enregistré"
+  },
+  "timeline": {
+    "unscheduled": "Tâches sans dates",
+    "unscheduledHint": "Ajoutez une échéance (et une date de début si besoin) pour voir la tâche sur la chronologie.",
+    "today": "Aujourd'hui",
+    "week": "Semaines",
+    "month": "Mois",
+    "zoom": "Échelle",
+    "dragHint": "Glissez une barre pour changer ses dates. Les flèches sont les dépendances ; une flèche rouge signale une tâche qui commence avant la fin de ce dont elle dépend.",
+    "empty": "Aucune tâche planifiée.",
+    "moved": "Dates modifiées"
+  },
+  "deps": {
+    "title": "Dépend de",
+    "blocking": "Attendue par",
+    "add": "Ajouter une tâche dont elle dépend…",
+    "none": "Aucune dépendance.",
+    "blocked": "Bloquée",
+    "blockedBy": "Bloquée par : {tasks}",
+    "remove": "Retirer"
   }
 }

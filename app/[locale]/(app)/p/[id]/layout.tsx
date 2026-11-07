@@ -16,7 +16,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
     <div className="px-4 py-6">
       <div className="mx-auto mb-4 flex max-w-7xl flex-wrap items-center gap-4">
         <h1 className="text-xl font-semibold">{project.name}</h1>
-        <ProjectTabs id={id} labels={{ list: t("project.list"), board: t("project.board"), progress: t("project.progress"), dashboard: t("project.dashboard"), funding: t("project.funding"), settings: t("projectSettings.tab") }} showSettings={isAdmin === true} showFunding={session?.role !== "guest"} />
+        <ProjectTabs id={id} labels={{ list: t("project.list"), board: t("project.board"), timeline: t("project.timeline"), progress: t("project.progress"), dashboard: t("project.dashboard"), funding: t("project.funding"), settings: t("projectSettings.tab") }} showSettings={isAdmin === true} showFunding={session?.role !== "guest"} />
       </div>
       {children}
     </div>

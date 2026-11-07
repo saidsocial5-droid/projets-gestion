@@ -2,6 +2,7 @@ import { TaskPanel } from "./TaskPanel";
 import { TaskSubtasks } from "./TaskSubtasks";
 import { TaskAttachments } from "./TaskAttachments";
 import { TaskConversation } from "./TaskConversation";
+import { TaskDependencies } from "./TaskDependencies";
 import { allowedTargets } from "@/lib/status";
 import { getTaskDetail } from "@/lib/task-detail";
 import { getSession } from "@/lib/session";
@@ -17,6 +18,13 @@ export async function TaskPanelSlot({ data, taskId }: { data: ProjectData; taskI
   return (
     <TaskPanel key={task.id} task={task} statuses={data.statuses} allowed={allowed} people={data.people} canEdit={data.canEdit} following={detail.following}>
       <TaskSubtasks parent={task} subtasks={detail.subtasks} canEdit={data.canEdit} />
+      <TaskDependencies
+        task={task}
+        predecessors={data.dependencies.filter((d) => d.task_id === task.id).map((d) => data.tasks.find((x) => x.id === d.depends_on_task_id)).filter((x) => !!x)}
+        successors={data.dependencies.filter((d) => d.depends_on_task_id === task.id).map((d) => data.tasks.find((x) => x.id === d.task_id)).filter((x) => !!x)}
+        candidates={data.tasks.filter((x) => x.id !== task.id && !data.dependencies.some((d) => d.task_id === task.id && d.depends_on_task_id === x.id))}
+        canEdit={data.canEdit}
+      />
       <TaskAttachments projectId={task.project_id} taskId={task.id} files={detail.attachments} canUpload={detail.canComment} userId={session!.userId} canAdmin={data.canAdmin} />
       <TaskConversation
         taskId={task.id}

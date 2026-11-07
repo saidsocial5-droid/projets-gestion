@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getProjectData } from "@/lib/project";
+import { blockedTasks, getProjectData } from "@/lib/project";
 import { createSection, createTask } from "@/lib/actions";
 import { statusName } from "@/lib/status";
 import { formatDate, isOverdue } from "@/lib/dates";
@@ -17,6 +17,7 @@ export default async function ListPage({ params, searchParams }: { params: Promi
   const t = await getTranslations();
   const statusById = new Map(data.statuses.map((s) => [s.id, s]));
   const personById = new Map(data.people.map((p) => [p.id, p]));
+  const blocked = blockedTasks(data);
 
   const groups: { id: string | null; name: string; tasks: Task[] }[] = [];
   const unsectioned = data.tasks.filter((x) => !x.section_id);
@@ -40,7 +41,12 @@ export default async function ListPage({ params, searchParams }: { params: Promi
                     scroll={false}
                     className={`grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-2 text-sm hover:bg-black/[0.03] sm:grid-cols-[1fr_9rem_9rem_6rem] dark:hover:bg-white/[0.04] ${taskId === task.id ? "bg-brand-50 dark:bg-brand-900/40" : ""}`}
                   >
-                    <span className={task.completed_at ? "text-muted line-through" : ""}>{task.title}</span>
+                    <span className={task.completed_at ? "text-muted line-through" : ""}>
+                      {task.title}
+                      {blocked.has(task.id) && (
+                        <span title={t("deps.blockedBy", { tasks: blocked.get(task.id)!.join("، ") })} className="ms-2 rounded bg-amber-100 px-1.5 py-0.5 text-xs text-amber-900 dark:bg-amber-900 dark:text-amber-100">⛔ {t("deps.blocked")}</span>
+                      )}
+                    </span>
                     <span className="justify-self-end sm:justify-self-start">{st && <StatusBadge name={statusName(st, locale)} color={st.color} />}</span>
                     <span className="truncate text-muted">{task.assignee_id ? personById.get(task.assignee_id)?.full_name : ""}</span>
                     <span className={`justify-self-end sm:justify-self-start ${overdue ? "font-medium text-rose-600" : "text-muted"}`}>

@@ -37,6 +37,7 @@ export function TaskPanel({ task, statuses, allowed, people, canEdit, following,
           status_id: String(form.get("status_id")),
           assignee_id: String(form.get("assignee_id") ?? "") || null,
           due_date: String(form.get("due_date") ?? "") || null,
+          start_date: String(form.get("start_date") ?? "") || null,
           priority: (String(form.get("priority") ?? "") || null) as Priority | null,
           description: String(form.get("description") ?? ""),
         },
@@ -92,6 +93,10 @@ export function TaskPanel({ task, statuses, allowed, people, canEdit, following,
                 <option value="">{t("task.unassigned")}</option>
                 {people.map((p) => <option key={p.id} value={p.id}>{p.full_name}</option>)}
               </select>
+            </label>
+            <label className="block space-y-1">
+              <span className="text-sm font-medium">{t("task.startDate")}</span>
+              <input name="start_date" type="date" defaultValue={task.start_date ?? ""} className="input" />
             </label>
             <label className="block space-y-1">
               <span className="text-sm font-medium">{t("task.dueDate")}</span>

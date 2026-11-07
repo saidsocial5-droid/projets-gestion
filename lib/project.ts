@@ -12,10 +12,11 @@ export interface ProjectData {
   people: Person[];
   canEdit: boolean;
   canAdmin: boolean;
+  dependencies: { task_id: string; depends_on_task_id: string }[];
 }
 
 const TASK_COLS =
-  "id, project_id, section_id, parent_task_id, status_id, assignee_id, title, description, priority, due_date, completed_at, rank, board_rank, updated_at";
+  "id, project_id, section_id, parent_task_id, status_id, assignee_id, title, description, priority, start_date, due_date, completed_at, rank, board_rank, updated_at";
 
 /** Everything the list, board and task panel need, read as the signed-in user (RLS). Null if not visible. */
 export async function getProjectData(id: string): Promise<ProjectData | null> {
@@ -41,7 +42,13 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
     if (m.profiles) people.set(m.profiles.id, m.profiles);
   }
 
+  const ids = (tasks.data ?? []).map((t) => t.id);
+  const { data: deps } = ids.length
+    ? await supabase.from("task_dependencies").select("task_id, depends_on_task_id").in("task_id", ids)
+    : { data: [] };
+
   return {
+    dependencies: (deps ?? []) as { task_id: string; depends_on_task_id: string }[],
     project: project as Project,
     restrict: wf.data?.restrict_transitions ?? false,
     statuses: (statuses.data ?? []) as Status[],
@@ -52,4 +59,16 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
     canEdit: role.data === true,
     canAdmin: admin.data === true,
   };
+}
+
+/** Open tasks whose predecessors are not all done: task id → titles of the unfinished predecessors. */
+export function blockedTasks(data: ProjectData): Map<string, string[]> {
+  const byId = new Map(data.tasks.map((t) => [t.id, t]));
+  const out = new Map<string, string[]>();
+  for (const d of data.dependencies) {
+    const task = byId.get(d.task_id);
+    const pre = byId.get(d.depends_on_task_id);
+    if (task && !task.completed_at && pre && !pre.completed_at) out.set(task.id, [...(out.get(task.id) ?? []), pre.title]);
+  }
+  return out;
 }

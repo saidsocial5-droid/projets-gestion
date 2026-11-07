@@ -35,7 +35,7 @@ export interface TaskDetail {
 }
 
 const TASK_COLS =
-  "id, project_id, section_id, parent_task_id, status_id, assignee_id, title, description, priority, due_date, completed_at, rank, board_rank, updated_at";
+  "id, project_id, section_id, parent_task_id, status_id, assignee_id, title, description, priority, start_date, due_date, completed_at, rank, board_rank, updated_at";
 
 export async function getTaskDetail(task: Task, userId: string): Promise<TaskDetail> {
   const supabase = await createClient();
