@@ -7,7 +7,18 @@ import type { Person } from "@/lib/types";
 
 type FormResult = { status: "idle" | "ok" | "error"; message?: string };
 
-export function ProjectGeneralForm({ project }: { project: { id: string; name: string; privacy: string; due_date: string | null } }) {
+interface ProjectRow {
+  id: string;
+  name: string;
+  privacy: string;
+  due_date: string | null;
+  start_date: string | null;
+  donor_id: string | null;
+  budget_cents: number | null;
+  currency: string;
+}
+
+export function ProjectGeneralForm({ project, donors }: { project: ProjectRow; donors: { id: string; name: string }[] | null }) {
   const t = useTranslations();
   const [state, action, pending] = useActionState(updateProject.bind(null, project.id), { status: "idle" } as FormResult);
   return (
@@ -27,6 +38,26 @@ export function ProjectGeneralForm({ project }: { project: { id: string; name: s
         <span className="text-sm font-medium">{t("projects.dueDate")}</span>
         <input name="due_date" type="date" defaultValue={project.due_date ?? ""} className="input" />
       </label>
+      {donors && (
+        <fieldset className="grid gap-3 border-t border-line pt-3 sm:col-span-2 sm:grid-cols-3">
+          <legend className="text-sm font-semibold">{t("projectSettings.funding")}</legend>
+          <label className="space-y-1">
+            <span className="text-sm font-medium">{t("funding.donor")}</span>
+            <select name="donor_id" defaultValue={project.donor_id ?? ""} className="input">
+              <option value="">{t("funding.noDonor")}</option>
+              {donors.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+          </label>
+          <label className="space-y-1">
+            <span className="text-sm font-medium">{t("projectSettings.budgetAmount")} ({project.currency})</span>
+            <input name="budget" inputMode="decimal" dir="ltr" defaultValue={project.budget_cents != null ? String(project.budget_cents / 100) : ""} className="input text-start" />
+          </label>
+          <label className="space-y-1">
+            <span className="text-sm font-medium">{t("projectSettings.startDate")}</span>
+            <input name="start_date" type="date" defaultValue={project.start_date ?? ""} className="input" />
+          </label>
+        </fieldset>
+      )}
       <div className="flex items-center gap-3 sm:col-span-2">
         <button className="btn-primary" disabled={pending}>{t("projectSettings.save")}</button>
         {state.status === "ok" && <span role="status" className="text-sm text-brand-600">{t("projectSettings.saved")}</span>}

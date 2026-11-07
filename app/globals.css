@@ -60,3 +60,7 @@ body {
 @utility btn-ghost {
   @apply btn hover:bg-black/5 dark:hover:bg-white/10;
 }
+
+@media print {
+  body { background: #fff; color: #000; }
+}

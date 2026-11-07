@@ -23,7 +23,7 @@ export default async function AppLayout({ children, params }: { children: React.
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="surface sticky top-0 z-20 flex items-center gap-2 border-x-0 border-t-0 px-4 py-2">
+      <header className="surface sticky top-0 z-20 print:hidden flex items-center gap-2 border-x-0 border-t-0 px-4 py-2">
         <Link href="/home" className="flex items-center gap-2 font-semibold">
           <span aria-hidden className="h-6 w-6 rounded bg-brand-600" />
           <span>AFMI</span>
@@ -36,7 +36,13 @@ export default async function AppLayout({ children, params }: { children: React.
             {unread > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-xs text-white" aria-label={`${unread}`}>{unread}</span>}
           </Link>
           <Link href="/projects" className="btn-ghost">{t("projects")}</Link>
-          {session!.role !== "guest" && <Link href="/portfolio" className="btn-ghost">{t("portfolio")}</Link>}
+          {session!.role !== "guest" && (
+            <>
+              <Link href="/portfolio" className="btn-ghost">{t("portfolio")}</Link>
+              <Link href="/reports" className="btn-ghost">{t("reports")}</Link>
+              <Link href="/donors" className="btn-ghost">{t("donors")}</Link>
+            </>
+          )}
           {session!.role === "admin" && <Link href="/settings/members" className="btn-ghost">{t("members")}</Link>}
         </nav>
         <div className="ms-auto flex items-center gap-1 text-sm">

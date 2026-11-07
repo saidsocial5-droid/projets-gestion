@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AddProjectMemberForm, InviteGuestForm, ProjectGeneralForm } from "@/components/ProjectSettingsForms";
 import { ProjectMemberControls, RevokeInvitation } from "@/components/MemberControls";
 import type { Person } from "@/lib/types";
+import { getSession } from "@/lib/session";
 
 export default async function ProjectSettingsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,11 +13,13 @@ export default async function ProjectSettingsPage({ params }: { params: Promise<
   if (!isAdmin) notFound();
   const t = await getTranslations();
 
-  const { data: project } = await supabase.from("projects").select("id, name, privacy, due_date, workspace_id").eq("id", id).single();
-  const [{ data: members }, { data: staff }, { data: invites }] = await Promise.all([
+  const { data: project } = await supabase.from("projects").select("id, name, privacy, due_date, start_date, donor_id, budget_cents, currency, workspace_id").eq("id", id).single();
+  const session = (await getSession())!;
+  const [{ data: members }, { data: staff }, { data: invites }, { data: donors }] = await Promise.all([
     supabase.from("project_members").select("role, profiles(id, full_name)").eq("project_id", id).order("created_at"),
     supabase.from("workspace_members").select("role, profiles(id, full_name)").eq("workspace_id", project!.workspace_id),
     supabase.from("invitations").select("id, email, project_role").eq("project_id", id).is("accepted_at", null).is("revoked_at", null).order("created_at"),
+    supabase.from("donors").select("id, name").order("name"),
   ]);
   const memberRows = (members ?? []) as unknown as { role: string; profiles: Person }[];
   const staffRows = (staff ?? []) as unknown as { role: string; profiles: Person }[];
@@ -28,7 +31,7 @@ export default async function ProjectSettingsPage({ params }: { params: Promise<
     <div className="mx-auto max-w-3xl space-y-8">
       <section className="space-y-2">
         <h2 className="font-medium">{t("projectSettings.general")}</h2>
-        <ProjectGeneralForm project={project!} />
+        <ProjectGeneralForm project={project!} donors={session.role === "guest" ? null : donors ?? []} />
       </section>
       <section className="space-y-3">
         <h2 className="font-medium">{t("projectSettings.members")}</h2>

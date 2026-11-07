@@ -7,6 +7,7 @@ import { getSession } from "./session";
 import { toActionError, type ActionResult } from "./errors";
 import type { Priority } from "./types";
 import { appOrigin, sendSignInEmail } from "./mail";
+import { EXPENSE_CATEGORIES, parseAmount } from "./money";
 
 const PRIORITIES: Priority[] = ["low", "medium", "high", "urgent"];
 
@@ -254,8 +255,17 @@ export async function updateProject(projectId: string, _prev: unknown, form: For
   const name = str(form, "name");
   const privacy = str(form, "privacy");
   if (!name || name.length > 200 || !["private", "workspace"].includes(privacy)) return { status: "error" };
+  const row: Record<string, unknown> = { name, privacy, due_date: str(form, "due_date") || null };
+  if (form.has("start_date")) row.start_date = str(form, "start_date") || null;
+  if (form.has("donor_id")) row.donor_id = str(form, "donor_id") || null;
+  if (form.has("budget")) {
+    const raw = str(form, "budget");
+    const cents = raw ? parseAmount(raw) : null;
+    if (raw && cents === null) return { status: "error" };
+    row.budget_cents = cents;
+  }
   const supabase = await createClient();
-  const { data, error } = await supabase.from("projects").update({ name, privacy, due_date: str(form, "due_date") || null }).eq("id", projectId).select("id");
+  const { data, error } = await supabase.from("projects").update(row).eq("id", projectId).select("id");
   if (error || !data.length) return { status: "error" };
   revalidatePath("/", "layout");
   return { status: "ok" };
@@ -415,4 +425,101 @@ export async function deleteStatusUpdate(id: string): Promise<ActionResult> {
   if (!data.length) return { ok: false, error: "forbidden" };
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// donors, expenses, indicators, reports (M2d)
+// ---------------------------------------------------------------------------
+
+export async function saveDonor(id: string | null, _prev: unknown, form: FormData): Promise<FormResult> {
+  const session = await getSession();
+  const name = str(form, "name");
+  if (!session || !name || name.length > 200) return { status: "error" };
+  const row = { name, contact_name: str(form, "contact_name") || null, contact_email: str(form, "contact_email") || null, notes: str(form, "notes") || null };
+  const supabase = await createClient();
+  const { error } = id
+    ? await supabase.from("donors").update(row).eq("id", id)
+    : await supabase.from("donors").insert({ ...row, workspace_id: session.workspaceId });
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function addExpense(projectId: string, _prev: unknown, form: FormData): Promise<FormResult> {
+  const cents = parseAmount(str(form, "amount"));
+  const label = str(form, "label");
+  const category = str(form, "category");
+  const spentOn = str(form, "spent_on");
+  if (cents === null) return { status: "error", message: "invalid_amount" };
+  if (!label || !/^\d{4}-\d{2}-\d{2}$/.test(spentOn) || !(EXPENSE_CATEGORIES as readonly string[]).includes(category)) return { status: "error" };
+  const supabase = await createClient();
+  const { data: project } = await supabase.from("projects").select("currency").eq("id", projectId).maybeSingle();
+  const { error } = await supabase.from("expenses").insert({
+    project_id: projectId, amount_cents: cents, currency: project?.currency ?? "MAD", spent_on: spentOn, category, label: label.slice(0, 300),
+  });
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function deleteExpense(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("expenses").delete().eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+function num(form: FormData, key: string): number | null {
+  const raw = str(form, key).replace(",", ".");
+  if (raw === "") return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : NaN;
+}
+
+export async function addIndicator(projectId: string, _prev: unknown, form: FormData): Promise<FormResult> {
+  const nameAr = str(form, "name_ar");
+  const nameFr = str(form, "name_fr");
+  const target = num(form, "target");
+  const baseline = num(form, "baseline") ?? 0;
+  if ((!nameAr && !nameFr) || target === null || Number.isNaN(target) || Number.isNaN(baseline)) return { status: "error" };
+  const supabase = await createClient();
+  const { data: last } = await supabase.from("indicators").select("rank").eq("project_id", projectId).order("rank", { ascending: false }).limit(1).maybeSingle();
+  const { error } = await supabase.from("indicators").insert({
+    project_id: projectId, name_ar: nameAr || nameFr, name_fr: nameFr || nameAr, unit: str(form, "unit"),
+    baseline, target, current: baseline, rank: generateKeyBetween(last?.rank ?? null, null),
+  });
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function setIndicatorCurrent(id: string, value: number): Promise<ActionResult> {
+  if (!Number.isFinite(value) || value < 0) return { ok: false, error: "generic" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("indicators").update({ current: value }).eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function createReport(_prev: unknown, form: FormData): Promise<FormResult & { id?: string }> {
+  const session = await getSession();
+  if (!session || session.role === "guest") return { status: "error" };
+  const title = str(form, "title");
+  const start = str(form, "period_start");
+  const end = str(form, "period_end");
+  const projectIds = form.getAll("project_ids").map(String).filter((x) => /^[0-9a-f-]{36}$/.test(x));
+  if (!projectIds.length) return { status: "error", message: "no_projects" };
+  if (!title || !start || !end || end < start) return { status: "error" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("reports").insert({
+    workspace_id: session.workspaceId, title, period_start: start, period_end: end, project_ids: projectIds,
+    donor_id: str(form, "donor_id") || null, locale: str(form, "locale") === "ar" ? "ar" : "fr",
+  }).select("id").single();
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok", id: data.id };
 }

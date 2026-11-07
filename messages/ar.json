@@ -11,7 +11,9 @@
     "home": "الرئيسية",
     "myTasks": "مهامي",
     "inbox": "الإشعارات",
-    "portfolio": "المحفظة"
+    "portfolio": "المحفظة",
+    "donors": "المانحون",
+    "reports": "التقارير"
   },
   "login": {
     "title": "تسجيل الدخول",
@@ -48,7 +50,8 @@
     "emptySection": "لا مهام في هذا القسم.",
     "emptyColumn": "اسحب مهمة إلى هنا",
     "progress": "التقدّم",
-    "dashboard": "المتابعة"
+    "dashboard": "المتابعة",
+    "funding": "التمويل"
   },
   "task": {
     "title": "العنوان",
@@ -180,7 +183,11 @@
     "role_commenter": "معلّق",
     "role_viewer": "مشاهد",
     "guest": "ضيف",
-    "pending": "دعوات في الانتظار"
+    "pending": "دعوات في الانتظار",
+    "funding": "التمويل",
+    "budgetAmount": "الميزانية",
+    "currency": "العملة",
+    "startDate": "تاريخ البداية"
   },
   "health": {
     "on_track": "على المسار",
@@ -230,5 +237,92 @@
     "due": "الانتهاء",
     "updated": "آخر تحديث",
     "empty": "لا مشاريع بعد."
+  },
+  "funding": {
+    "budget": "الميزانية",
+    "spent": "المصروف",
+    "remaining": "المتبقي",
+    "noBudget": "لم تُحدَّد ميزانية بعد. أضفها من إعدادات المشروع.",
+    "donor": "المانح",
+    "noDonor": "بلا مانح",
+    "expenses": "المصاريف",
+    "addExpense": "إضافة مصروف",
+    "date": "التاريخ",
+    "label": "البيان",
+    "category": "الفئة",
+    "amount": "المبلغ (درهم)",
+    "add": "إضافة",
+    "noExpenses": "لا مصاريف مسجلة.",
+    "delete": "حذف",
+    "invalidAmount": "مبلغ غير صالح.",
+    "indicators": "مؤشرات الإنجاز",
+    "addIndicator": "إضافة مؤشر",
+    "nameAr": "الاسم بالعربية",
+    "nameFr": "الاسم بالفرنسية",
+    "unit": "الوحدة",
+    "baseline": "خط الأساس",
+    "target": "الهدف",
+    "current": "المحقق",
+    "achieved": "{pct}% من الهدف",
+    "noIndicators": "لا مؤشرات بعد. مثال: «عدد الأشجار المغروسة» — الهدف 1000.",
+    "update": "تحديث",
+    "overBudget": "تجاوز الميزانية"
+  },
+  "category": {
+    "personnel": "موارد بشرية",
+    "equipment": "معدات",
+    "travel": "تنقل",
+    "services": "خدمات",
+    "training": "تكوين",
+    "other": "أخرى"
+  },
+  "donors": {
+    "title": "المانحون",
+    "new": "مانح جديد",
+    "name": "الاسم",
+    "contactName": "جهة الاتصال",
+    "contactEmail": "البريد",
+    "notes": "ملاحظات",
+    "save": "حفظ",
+    "projects": "{count} مشروع",
+    "empty": "لا مانحين بعد.",
+    "saved": "تم الحفظ"
+  },
+  "reports": {
+    "title": "تقارير المانحين",
+    "new": "تقرير جديد",
+    "reportTitle": "عنوان التقرير",
+    "donor": "المانح",
+    "allProjects": "اختر المشاريع",
+    "periodStart": "من",
+    "periodEnd": "إلى",
+    "language": "لغة التقرير",
+    "create": "إنشاء التقرير",
+    "empty": "لا تقارير بعد.",
+    "print": "طباعة / PDF",
+    "excel": "تحميل Excel",
+    "period": "الفترة: {start} – {end}",
+    "noProjects": "اختر مشروعاً واحداً على الأقل."
+  },
+  "doc": {
+    "summary": "ملخص",
+    "projects": "المشاريع",
+    "progress": "الإنجاز",
+    "tasksDone": "المهام المنجزة",
+    "doneInPeriod": "أُنجزت خلال الفترة",
+    "budget": "الميزانية",
+    "spentTotal": "المصروف الإجمالي",
+    "spentPeriod": "المصروف خلال الفترة",
+    "rate": "نسبة الصرف",
+    "byCategory": "المصاريف خلال الفترة حسب الفئة",
+    "indicators": "مؤشرات الإنجاز",
+    "indicator": "المؤشر",
+    "updates": "تحديثات الحالة خلال الفترة",
+    "noUpdates": "لا تحديثات خلال هذه الفترة.",
+    "noIndicators": "لا مؤشرات.",
+    "generated": "أُعدّ في {date} — جمعية الغابة النموذجية بإفران",
+    "health": "الحالة",
+    "project": "المشروع",
+    "total": "المجموع"
   }
 }

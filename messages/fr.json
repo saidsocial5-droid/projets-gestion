@@ -11,7 +11,9 @@
     "home": "Accueil",
     "myTasks": "Mes tâches",
     "inbox": "Notifications",
-    "portfolio": "Portefeuille"
+    "portfolio": "Portefeuille",
+    "donors": "Bailleurs",
+    "reports": "Rapports"
   },
   "login": {
     "title": "Connexion",
@@ -48,7 +50,8 @@
     "emptySection": "Aucune tâche dans cette section.",
     "emptyColumn": "Glissez une tâche ici",
     "progress": "Avancement",
-    "dashboard": "Suivi"
+    "dashboard": "Suivi",
+    "funding": "Financement"
   },
   "task": {
     "title": "Titre",
@@ -180,7 +183,11 @@
     "role_commenter": "Commentateur",
     "role_viewer": "Lecteur",
     "guest": "Invité",
-    "pending": "Invitations en attente"
+    "pending": "Invitations en attente",
+    "funding": "Financement",
+    "budgetAmount": "Budget",
+    "currency": "Devise",
+    "startDate": "Date de début"
   },
   "health": {
     "on_track": "En bonne voie",
@@ -230,5 +237,92 @@
     "due": "Fin",
     "updated": "Dernier point",
     "empty": "Aucun projet pour l'instant."
+  },
+  "funding": {
+    "budget": "Budget",
+    "spent": "Dépensé",
+    "remaining": "Restant",
+    "noBudget": "Aucun budget défini. Ajoutez-le dans les paramètres du projet.",
+    "donor": "Bailleur",
+    "noDonor": "Sans bailleur",
+    "expenses": "Dépenses",
+    "addExpense": "Ajouter une dépense",
+    "date": "Date",
+    "label": "Libellé",
+    "category": "Catégorie",
+    "amount": "Montant (MAD)",
+    "add": "Ajouter",
+    "noExpenses": "Aucune dépense enregistrée.",
+    "delete": "Supprimer",
+    "invalidAmount": "Montant invalide.",
+    "indicators": "Indicateurs",
+    "addIndicator": "Ajouter un indicateur",
+    "nameAr": "Nom en arabe",
+    "nameFr": "Nom en français",
+    "unit": "Unité",
+    "baseline": "Situation de départ",
+    "target": "Cible",
+    "current": "Réalisé",
+    "achieved": "{pct} % de la cible",
+    "noIndicators": "Aucun indicateur. Exemple : « Arbres plantés » — cible 1000.",
+    "update": "Mettre à jour",
+    "overBudget": "Budget dépassé"
+  },
+  "category": {
+    "personnel": "Personnel",
+    "equipment": "Équipement",
+    "travel": "Déplacements",
+    "services": "Prestations",
+    "training": "Formation",
+    "other": "Autre"
+  },
+  "donors": {
+    "title": "Bailleurs de fonds",
+    "new": "Nouveau bailleur",
+    "name": "Nom",
+    "contactName": "Contact",
+    "contactEmail": "E-mail",
+    "notes": "Notes",
+    "save": "Enregistrer",
+    "projects": "{count} projet(s)",
+    "empty": "Aucun bailleur pour l'instant.",
+    "saved": "Enregistré"
+  },
+  "reports": {
+    "title": "Rapports aux bailleurs",
+    "new": "Nouveau rapport",
+    "reportTitle": "Titre du rapport",
+    "donor": "Bailleur",
+    "allProjects": "Choisir les projets",
+    "periodStart": "Du",
+    "periodEnd": "Au",
+    "language": "Langue du rapport",
+    "create": "Créer le rapport",
+    "empty": "Aucun rapport pour l'instant.",
+    "print": "Imprimer / PDF",
+    "excel": "Télécharger Excel",
+    "period": "Période : {start} – {end}",
+    "noProjects": "Choisissez au moins un projet."
+  },
+  "doc": {
+    "summary": "Synthèse",
+    "projects": "Projets",
+    "progress": "Avancement",
+    "tasksDone": "Tâches terminées",
+    "doneInPeriod": "Terminées sur la période",
+    "budget": "Budget",
+    "spentTotal": "Dépensé (total)",
+    "spentPeriod": "Dépensé sur la période",
+    "rate": "Taux d'exécution",
+    "byCategory": "Dépenses de la période par catégorie",
+    "indicators": "Indicateurs",
+    "indicator": "Indicateur",
+    "updates": "Points d'avancement de la période",
+    "noUpdates": "Aucun point sur cette période.",
+    "noIndicators": "Aucun indicateur.",
+    "generated": "Établi le {date} — Association Forêt Modèle d'Ifrane",
+    "health": "Statut",
+    "project": "Projet",
+    "total": "Total"
   }
 }

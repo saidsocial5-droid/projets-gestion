@@ -12,14 +12,15 @@ const STYLE: Record<Health | "none", { icon: string; cls: string }> = {
   none: { icon: "○", cls: "bg-transparent text-muted border border-line" },
 };
 
-export function HealthBadge({ health }: { health: Health | null }) {
+/** `label` overrides the text, e.g. when a document is rendered in another language than the UI. */
+export function HealthBadge({ health, label }: { health: Health | null; label?: string }) {
   const t = useTranslations("health");
   const key = health ?? "none";
   const s = STYLE[key];
   return (
     <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${s.cls}`}>
       <span aria-hidden className="text-[0.6rem]">{s.icon}</span>
-      {t(key)}
+      {label ?? t(key)}
     </span>
   );
 }
