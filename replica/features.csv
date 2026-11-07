@@ -9,36 +9,36 @@ Teams,org,could,Asana,no,optional for a small association
 Home page summary,navigation,must,Asana,yes,S02
 My tasks grouped by due date,tasks,must,Asana,yes,S03
 Inbox notifications,notifications,must,Asana,yes,S04
-Email notifications digest,notifications,should,both,no,
+Email notifications digest,notifications,should,both,yes,
 Project list with status and progress,projects,must,Asana,yes,S05
-Create project from template,projects,should,both,no,S06 AFMI templates written in-house
-Archive project,projects,should,both,no,
+Create project from template,projects,should,both,yes,S06 AFMI templates written in-house
+Archive project,projects,should,both,yes,
 Sections in project,projects,must,Asana,yes,S07
 List view with field columns,views,must,Asana,yes,S07
 Inline edit in list,views,should,Asana,partial,S07 | edit in side panel
 Board view columns = workflow statuses,views,must,Jira,yes,S08 R15
 Drag card = workflow transition,views,must,Jira,yes,F04 R15
-Timeline / Gantt view,views,should,Asana,no,S10 R9
+Timeline / Gantt view,views,should,Asana,yes,S10 R9
 Calendar view,views,could,Asana,no,S11
 Task create / edit / delete,tasks,must,both,yes,S09
 Assignee and due date,tasks,must,both,yes,S09
-Start date,tasks,should,both,no,
+Start date,tasks,should,both,yes,
 Priority,tasks,must,both,yes,
 Rich text description,tasks,must,both,partial,plain text for now (Tiptap later)
 Subtasks,tasks,must,Asana,yes,R10
-Dependencies waiting on / blocking,tasks,should,Asana,no,R9
+Dependencies waiting on / blocking,tasks,should,Asana,yes,R9
 Comments with @mentions,collaboration,must,both,yes,S09
 Attachments,collaboration,must,both,yes,S09
 Activity log per task,collaboration,must,both,yes,
 Followers,collaboration,should,Asana,yes,
-Real-time updates between users,collaboration,could,both,no,hard part
+Real-time updates between users,collaboration,could,both,yes,hard part
 Custom workflows statuses + categories,workflow,must,Jira,yes,S17 R14
 Allowed transitions,workflow,should,Jira,yes,S17 R14
 Global transition to any status,workflow,could,Jira,yes,R14
-Custom fields text/number/select/multi/date,fields,should,Asana,no,S18 R8
+Custom fields text/number/select/multi/date,fields,should,Asana,yes,S18 R8
 Search,search,must,both,yes,S20
-Filters and sort in views,search,must,both,partial,sort by rank only; filters not yet
-Saved filters,search,could,Jira,no,
+Filters and sort in views,search,must,both,yes,"sort by rank only; filters not yet | URL filters: status, assignee, due, select fields"
+Saved filters,search,could,Jira,partial," | filters live in the URL, so a bookmark saves them"
 Project status updates (5 states),reporting,must,Asana,yes,S13 R5
 Status update templates,reporting,could,Asana,no,R5
 Charts embedded in status update,reporting,should,Asana,partial,R5 | progress snapshot stored with each update

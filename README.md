@@ -12,7 +12,8 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 - [ ] المرحلة 3: نظام التصميم
 - [x] المرحلة 4 / M1: النسخة الأولية — دخول برابط سحري، مشاريع، قائمة، لوحة بالسحب، سير عمل تفرضه القاعدة، دعوة عضو، عربية/فرنسية
 - [x] M2: التعليقات والإشارات والمرفقات والإشعارات، الضيوف والأدوار، تحديثات الحالة ولوحة المتابعة والمحفظة، المانحون والميزانية والمؤشرات وتقارير المانحين (PDF/Excel)، محرّر سير العمل، البحث، الملف الشخصي
-- [ ] M3: الجدول الزمني (Gantt)، الحقول المخصصة، قوالب المشاريع، الأرشفة، الملخص اليومي بالبريد، التحديث اللحظي
+- [x] M3: الجدول الزمني (Gantt) والتبعيات، الحقول المخصصة والفلاتر، قوالب المشاريع والأرشفة، الملخص اليومي بالبريد، التحديث اللحظي
+- [ ] لاحقاً: التقويم، تنسيق الوصف (نص غني)، الأتمتة
 
 ## الملفات / Fichiers
 
@@ -80,4 +81,4 @@ psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/tests
 1. أنشئ مشروعاً على Supabase (منطقة أوروبية) ثم: `npx supabase link` و`npx supabase db push`.
 2. في Supabase > Authentication > Emails: الصق القالب `supabase/templates/magic_link.html` لقالبي Magic Link وConfirm signup، وأضف عنوان الموقع إلى Redirect URLs.
 3. في Supabase > Authentication > SMTP: اربط مزوّد بريد (Resend مثلاً) بنطاق الجمعية.
-4. على Vercel: استورد المستودع وأضف `NEXT_PUBLIC_SUPABASE_URL` و`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+4. على Vercel: استورد المستودع وأضف `NEXT_PUBLIC_SUPABASE_URL` و`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`، ثم للملخص اليومي: `SUPABASE_SECRET_KEY` و`CRON_SECRET` و`RESEND_API_KEY` و`MAIL_FROM` (انظر `.env.example`). الجدولة في `vercel.json`.

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProjectTabs } from "@/components/ProjectTabs";
+import { LiveRefresh } from "@/components/LiveRefresh";
 import { getSession } from "@/lib/session";
 
 export default async function ProjectLayout({ children, params }: { children: React.ReactNode; params: Promise<{ id: string }> }) {
@@ -23,6 +24,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
         <h1 className="text-xl font-semibold">{project.name}</h1>
         <ProjectTabs id={id} labels={{ list: t("project.list"), board: t("project.board"), timeline: t("project.timeline"), progress: t("project.progress"), dashboard: t("project.dashboard"), funding: t("project.funding"), settings: t("projectSettings.tab") }} showSettings={isAdmin === true} showFunding={session?.role !== "guest"} />
       </div>
+      <LiveRefresh projectId={id} />
       {children}
     </div>
   );
