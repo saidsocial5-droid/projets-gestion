@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/lib/actions";
 import { LocaleSwitch } from "@/components/LocaleSwitch";
+import { unreadCount } from "@/lib/inbox";
 
 export default async function AppLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -15,18 +16,25 @@ export default async function AppLayout({ children, params }: { children: React.
     const supabase = await createClient();
     const { data } = await supabase.rpc("bootstrap_or_join");
     if (!data) redirect({ href: "/no-access", locale });
-    else redirect({ href: "/projects", locale });
+    else redirect({ href: "/home", locale });
   }
   const t = await getTranslations("nav");
+  const unread = await unreadCount(session!.userId);
 
   return (
     <div className="flex min-h-screen flex-col">
       <header className="surface sticky top-0 z-20 flex items-center gap-2 border-x-0 border-t-0 px-4 py-2">
-        <Link href="/projects" className="flex items-center gap-2 font-semibold">
+        <Link href="/home" className="flex items-center gap-2 font-semibold">
           <span aria-hidden className="h-6 w-6 rounded bg-brand-600" />
           <span>AFMI</span>
         </Link>
-        <nav className="ms-4 flex items-center gap-1 text-sm">
+        <nav className="ms-4 flex min-w-0 items-center gap-1 overflow-x-auto text-sm">
+          <Link href="/home" className="btn-ghost">{t("home")}</Link>
+          <Link href="/my-tasks" className="btn-ghost">{t("myTasks")}</Link>
+          <Link href="/inbox" className="btn-ghost">
+            {t("inbox")}
+            {unread > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-xs text-white" aria-label={`${unread}`}>{unread}</span>}
+          </Link>
           <Link href="/projects" className="btn-ghost">{t("projects")}</Link>
           {session!.role === "admin" && <Link href="/settings/members" className="btn-ghost">{t("members")}</Link>}
         </nav>

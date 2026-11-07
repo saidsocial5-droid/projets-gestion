@@ -1,6 +1,17 @@
 {
-  "app": { "name": "مشاريع AFMI", "tagline": "إدارة مشاريع جمعية الغابة النموذجية بإفران" },
-  "nav": { "projects": "المشاريع", "members": "الأعضاء", "signOut": "خروج", "language": "Français" },
+  "app": {
+    "name": "مشاريع AFMI",
+    "tagline": "إدارة مشاريع جمعية الغابة النموذجية بإفران"
+  },
+  "nav": {
+    "projects": "المشاريع",
+    "members": "الأعضاء",
+    "signOut": "خروج",
+    "language": "Français",
+    "home": "الرئيسية",
+    "myTasks": "مهامي",
+    "inbox": "الإشعارات"
+  },
   "login": {
     "title": "تسجيل الدخول",
     "email": "البريد الإلكتروني",
@@ -55,7 +66,22 @@
     "confirmDelete": "حذف هذه المهمة نهائياً؟",
     "close": "إغلاق",
     "overdue": "متأخرة",
-    "done": "منجزة"
+    "done": "منجزة",
+    "subtasks": "المهام الفرعية",
+    "addSubtask": "أضف مهمة فرعية…",
+    "comments": "التعليقات",
+    "commentPlaceholder": "اكتب تعليقاً… استعمل @ للإشارة إلى شخص",
+    "send": "إرسال",
+    "noComments": "لا تعليقات بعد.",
+    "attachments": "المرفقات",
+    "upload": "إرفاق ملف",
+    "uploading": "جارٍ الرفع…",
+    "fileTooBig": "الحد الأقصى للملف 25 ميغابايت.",
+    "follow": "متابعة",
+    "unfollow": "إلغاء المتابعة",
+    "activity": "السجل",
+    "deleteComment": "حذف",
+    "deleteFile": "حذف الملف"
   },
   "members": {
     "title": "أعضاء الجمعية",
@@ -75,5 +101,54 @@
     "forbidden": "ليست لديك صلاحية لهذا الإجراء.",
     "conflict": "عدّل شخص آخر هذه المهمة. حدّث الصفحة.",
     "generic": "حدث خطأ. حاول مرة أخرى."
+  },
+  "activity": {
+    "task": {
+      "created": "إنشاء المهمة",
+      "updated": "تعديل المهمة",
+      "status_changed": "تغيير الحالة إلى «{to}»",
+      "assigned": "إسناد المهمة إلى {to}",
+      "unassigned": "إلغاء الإسناد",
+      "completed": "إنجاز المهمة",
+      "deleted": "حذف المهمة"
+    },
+    "comment": {
+      "created": "تعليق: «{excerpt}»"
+    },
+    "attachment": {
+      "added": "إرفاق {file}"
+    },
+    "status_update": {
+      "posted": "نشر تحديث حالة"
+    },
+    "member": {
+      "added": "إضافة عضو"
+    },
+    "someone": "شخص"
+  },
+  "inbox": {
+    "title": "الإشعارات",
+    "empty": "لا إشعارات. كل شيء مقروء.",
+    "markAll": "تعليم الكل كمقروء",
+    "in": "في {project}"
+  },
+  "myTasks": {
+    "title": "مهامي",
+    "empty": "لا مهام مسندة إليك. 🎉",
+    "overdue": "متأخرة",
+    "today": "اليوم",
+    "week": "هذا الأسبوع",
+    "later": "لاحقاً",
+    "noDate": "بلا تاريخ"
+  },
+  "home": {
+    "hello": "مرحباً {name}",
+    "dueSoon": "مهامي القريبة",
+    "allTasks": "كل مهامي",
+    "unread": "إشعارات غير مقروءة",
+    "allInbox": "كل الإشعارات",
+    "projects": "مشاريعي",
+    "allProjects": "كل المشاريع",
+    "overdueCount": "{count} مهمة متأخرة"
   }
 }

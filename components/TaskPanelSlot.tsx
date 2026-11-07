@@ -1,11 +1,33 @@
 import { TaskPanel } from "./TaskPanel";
+import { TaskSubtasks } from "./TaskSubtasks";
+import { TaskAttachments } from "./TaskAttachments";
+import { TaskConversation } from "./TaskConversation";
 import { allowedTargets } from "@/lib/status";
+import { getTaskDetail } from "@/lib/task-detail";
+import { getSession } from "@/lib/session";
 import type { ProjectData } from "@/lib/project";
 
 /** Renders the side panel when ?task=<id> is in the URL. */
-export function TaskPanelSlot({ data, taskId }: { data: ProjectData; taskId?: string }) {
+export async function TaskPanelSlot({ data, taskId }: { data: ProjectData; taskId?: string }) {
   const task = taskId ? data.tasks.find((t) => t.id === taskId) : undefined;
   if (!task) return null;
+  const session = await getSession();
+  const detail = await getTaskDetail(task, session!.userId);
   const allowed = [...allowedTargets(task.status_id, data.restrict, data.statuses, data.transitions)];
-  return <TaskPanel task={task} statuses={data.statuses} allowed={allowed} people={data.people} canEdit={data.canEdit} />;
+  return (
+    <TaskPanel key={task.id} task={task} statuses={data.statuses} allowed={allowed} people={data.people} canEdit={data.canEdit} following={detail.following}>
+      <TaskSubtasks parent={task} subtasks={detail.subtasks} canEdit={data.canEdit} />
+      <TaskAttachments projectId={task.project_id} taskId={task.id} files={detail.attachments} canUpload={detail.canComment} userId={session!.userId} canAdmin={data.canAdmin} />
+      <TaskConversation
+        taskId={task.id}
+        comments={detail.comments}
+        activities={detail.activities}
+        people={data.people}
+        statuses={data.statuses}
+        userId={session!.userId}
+        canComment={detail.canComment}
+        canAdmin={data.canAdmin}
+      />
+    </TaskPanel>
+  );
 }

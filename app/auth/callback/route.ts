@@ -17,6 +17,6 @@ export async function GET(request: NextRequest) {
     if (error) return NextResponse.redirect(new URL(`/${locale}/login?error=1`, origin));
   }
   const { data: workspaceId } = await supabase.rpc("bootstrap_or_join");
-  const target = workspaceId ? `/${locale}/projects` : `/${locale}/no-access`;
+  const target = workspaceId ? `/${locale}/home` : `/${locale}/no-access`;
   return NextResponse.redirect(new URL(target, origin));
 }

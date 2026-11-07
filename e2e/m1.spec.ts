@@ -13,9 +13,9 @@ test("M1 vertical slice: sign in, create, move, workflow refusal, second user, F
   // (run `npx supabase db reset` first). The first user to sign in becomes admin.
   const a = await (await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 })).newPage();
   await signIn(a, admin);
-  await expect(a).toHaveURL(/\/ar\/projects$/);
+  await expect(a).toHaveURL(/\/ar\/home$/);
   await expect(a.locator("html")).toHaveAttribute("dir", "rtl");
-  await expect(a.getByRole("heading", { name: "المشاريع" })).toBeVisible();
+  await expect(a.getByRole("heading", { level: 1 })).toContainText("مرحباً");
 
   // invite the second person
   await a.getByRole("link", { name: "الأعضاء" }).click();
@@ -25,7 +25,7 @@ test("M1 vertical slice: sign in, create, move, workflow refusal, second user, F
   await expect(a.getByText(member)).toBeVisible();
 
   // create a project and a task
-  await a.getByRole("link", { name: "المشاريع" }).first().click();
+  await a.getByRole("navigation").getByRole("link", { name: "المشاريع" }).click();
   await a.getByRole("button", { name: "+ مشروع جديد" }).click();
   await a.locator('input[name="name"]').fill(project);
   await a.getByRole("button", { name: "إنشاء" }).click();
@@ -61,10 +61,10 @@ test("M1 vertical slice: sign in, create, move, workflow refusal, second user, F
   // second user claims the invitation on first sign-in and sees the same state
   const b = await (await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 2 })).newPage();
   await signIn(b, member, "fr");
-  await expect(b).toHaveURL(/\/fr\/projects$/);
+  await expect(b).toHaveURL(/\/fr\/home$/);
   await expect(b.locator("html")).toHaveAttribute("dir", "ltr");
   await expect(b.getByRole("link", { name: "Membres" })).toHaveCount(0); // not an admin
-  await b.getByRole("link", { name: new RegExp(project) }).click();
+  await b.getByRole("link", { name: new RegExp(project) }).first().click();
   await b.getByRole("link", { name: "Tableau" }).click();
   await expect(b.getByRole("region", { name: "En cours", exact: true }).getByText(task)).toBeVisible();
   await dragCard(b, task, "En revue");

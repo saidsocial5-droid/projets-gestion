@@ -11,6 +11,7 @@ export interface ProjectData {
   tasks: Task[];
   people: Person[];
   canEdit: boolean;
+  canAdmin: boolean;
 }
 
 const TASK_COLS =
@@ -23,7 +24,7 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
     .from("projects").select("id, name, privacy, due_date, color, workflow_id, workspace_id").eq("id", id).maybeSingle();
   if (!project) return null;
 
-  const [wf, statuses, transitions, sections, tasks, members, projectMembers, role] = await Promise.all([
+  const [wf, statuses, transitions, sections, tasks, members, projectMembers, role, admin] = await Promise.all([
     supabase.from("workflows").select("restrict_transitions").eq("id", project.workflow_id).single(),
     supabase.from("workflow_statuses").select("id, name_ar, name_fr, color, category, rank").eq("workflow_id", project.workflow_id).order("rank"),
     supabase.from("workflow_transitions").select("from_status_id, to_status_id").eq("workflow_id", project.workflow_id),
@@ -32,6 +33,7 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
     supabase.from("workspace_members").select("role, profiles(id, full_name)").eq("workspace_id", project.workspace_id).neq("role", "guest"),
     supabase.from("project_members").select("profiles(id, full_name)").eq("project_id", id),
     supabase.rpc("can_edit_project", { p: id }),
+    supabase.rpc("can_admin_project", { p: id }),
   ]);
 
   const people = new Map<string, Person>();
@@ -48,5 +50,6 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
     tasks: (tasks.data ?? []) as Task[],
     people: [...people.values()].sort((a, b) => a.full_name.localeCompare(b.full_name)),
     canEdit: role.data === true,
+    canAdmin: admin.data === true,
   };
 }

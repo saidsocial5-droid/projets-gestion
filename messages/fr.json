@@ -1,6 +1,17 @@
 {
-  "app": { "name": "Projets AFMI", "tagline": "Gestion des projets de l'Association Forêt Modèle d'Ifrane" },
-  "nav": { "projects": "Projets", "members": "Membres", "signOut": "Déconnexion", "language": "العربية" },
+  "app": {
+    "name": "Projets AFMI",
+    "tagline": "Gestion des projets de l'Association Forêt Modèle d'Ifrane"
+  },
+  "nav": {
+    "projects": "Projets",
+    "members": "Membres",
+    "signOut": "Déconnexion",
+    "language": "العربية",
+    "home": "Accueil",
+    "myTasks": "Mes tâches",
+    "inbox": "Notifications"
+  },
   "login": {
     "title": "Connexion",
     "email": "Adresse e-mail",
@@ -55,7 +66,22 @@
     "confirmDelete": "Supprimer définitivement cette tâche ?",
     "close": "Fermer",
     "overdue": "En retard",
-    "done": "Terminée"
+    "done": "Terminée",
+    "subtasks": "Sous-tâches",
+    "addSubtask": "Ajouter une sous-tâche…",
+    "comments": "Commentaires",
+    "commentPlaceholder": "Écrire un commentaire… @ pour mentionner quelqu'un",
+    "send": "Envoyer",
+    "noComments": "Pas encore de commentaire.",
+    "attachments": "Pièces jointes",
+    "upload": "Joindre un fichier",
+    "uploading": "Envoi…",
+    "fileTooBig": "Taille maximale : 25 Mo.",
+    "follow": "Suivre",
+    "unfollow": "Ne plus suivre",
+    "activity": "Historique",
+    "deleteComment": "Supprimer",
+    "deleteFile": "Supprimer le fichier"
   },
   "members": {
     "title": "Membres de l'association",
@@ -75,5 +101,54 @@
     "forbidden": "Vous n'avez pas le droit de faire cette action.",
     "conflict": "Quelqu'un d'autre a modifié cette tâche. Actualisez la page.",
     "generic": "Une erreur est survenue. Réessayez."
+  },
+  "activity": {
+    "task": {
+      "created": "a créé la tâche",
+      "updated": "a modifié la tâche",
+      "status_changed": "a changé le statut en « {to} »",
+      "assigned": "a assigné la tâche à {to}",
+      "unassigned": "a retiré l'assignation",
+      "completed": "a terminé la tâche",
+      "deleted": "a supprimé la tâche"
+    },
+    "comment": {
+      "created": "a commenté : « {excerpt} »"
+    },
+    "attachment": {
+      "added": "a joint {file}"
+    },
+    "status_update": {
+      "posted": "a publié un point d'avancement"
+    },
+    "member": {
+      "added": "a ajouté un membre"
+    },
+    "someone": "Quelqu'un"
+  },
+  "inbox": {
+    "title": "Notifications",
+    "empty": "Aucune notification. Tout est lu.",
+    "markAll": "Tout marquer comme lu",
+    "in": "dans {project}"
+  },
+  "myTasks": {
+    "title": "Mes tâches",
+    "empty": "Aucune tâche ne vous est assignée. 🎉",
+    "overdue": "En retard",
+    "today": "Aujourd'hui",
+    "week": "Cette semaine",
+    "later": "Plus tard",
+    "noDate": "Sans date"
+  },
+  "home": {
+    "hello": "Bonjour {name}",
+    "dueSoon": "Mes prochaines tâches",
+    "allTasks": "Toutes mes tâches",
+    "unread": "Notifications non lues",
+    "allInbox": "Toutes les notifications",
+    "projects": "Mes projets",
+    "allProjects": "Tous les projets",
+    "overdueCount": "{count} tâche(s) en retard"
   }
 }

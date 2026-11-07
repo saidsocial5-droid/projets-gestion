@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { deleteTask, updateTask } from "@/lib/actions";
+import { deleteTask, setFollowing, updateTask } from "@/lib/actions";
 import { statusName } from "@/lib/status";
 import type { Person, Priority, Status, Task } from "@/lib/types";
 
@@ -15,9 +15,11 @@ interface Props {
   allowed: string[];
   people: Person[];
   canEdit: boolean;
+  following: boolean;
+  children?: React.ReactNode;
 }
 
-export function TaskPanel({ task, statuses, allowed, people, canEdit }: Props) {
+export function TaskPanel({ task, statuses, allowed, people, canEdit, following, children }: Props) {
   const t = useTranslations();
   const locale = useLocale();
   const path = usePathname();
@@ -59,7 +61,12 @@ export function TaskPanel({ task, statuses, allowed, people, canEdit }: Props) {
     >
       <div className="mb-4 flex items-center justify-between">
         {task.completed_at ? <span className="text-sm text-brand-600">✓ {t("task.done")}</span> : <span />}
-        <Link href={path} className="btn-ghost" aria-label={t("task.close")}>✕</Link>
+        <div className="flex items-center gap-1">
+          <button type="button" className="btn-ghost text-xs" aria-pressed={following} disabled={pending} onClick={() => start(async () => { await setFollowing(task.id, !following); })}>
+            {following ? `🔔 ${t("task.unfollow")}` : `🔕 ${t("task.follow")}`}
+          </button>
+          <Link href={path} className="btn-ghost" aria-label={t("task.close")}>✕</Link>
+        </div>
       </div>
       {/* key: reset the form when the server sends a newer version */}
       <form key={task.updated_at} action={save} className="space-y-4">
@@ -111,6 +118,7 @@ export function TaskPanel({ task, statuses, allowed, people, canEdit }: Props) {
           </div>
         )}
       </form>
+      {children && <div className="mt-6 space-y-6 border-t border-line pt-6">{children}</div>}
     </aside>
   );
 }

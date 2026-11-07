@@ -79,7 +79,7 @@ export async function createSection(projectId: string, name: string): Promise<Ac
 // tasks
 // ---------------------------------------------------------------------------
 
-export async function createTask(projectId: string, sectionId: string | null, title: string): Promise<ActionResult<string>> {
+export async function createTask(projectId: string, sectionId: string | null, title: string, parentId: string | null = null): Promise<ActionResult<string>> {
   title = title.trim();
   if (!title || title.length > 500) return { ok: false, error: "generic" };
   const supabase = await createClient();
@@ -91,7 +91,8 @@ export async function createTask(projectId: string, sectionId: string | null, ti
     .order("rank").limit(1).single();
 
   let rankQ = supabase.from("tasks").select("rank").eq("project_id", projectId).order("rank", { ascending: false }).limit(1);
-  rankQ = sectionId ? rankQ.eq("section_id", sectionId) : rankQ.is("section_id", null);
+  if (parentId) rankQ = rankQ.eq("parent_task_id", parentId);
+  else rankQ = (sectionId ? rankQ.eq("section_id", sectionId) : rankQ.is("section_id", null)).is("parent_task_id", null);
   const { data: lastRank } = await rankQ.maybeSingle();
   const { data: lastBoard } = await supabase
     .from("tasks").select("board_rank").eq("project_id", projectId).eq("status_id", first!.id)
@@ -99,7 +100,8 @@ export async function createTask(projectId: string, sectionId: string | null, ti
 
   const { data, error } = await supabase.from("tasks").insert({
     project_id: projectId,
-    section_id: sectionId,
+    section_id: parentId ? null : sectionId,
+    parent_task_id: parentId,
     status_id: first!.id,
     title,
     rank: generateKeyBetween(lastRank?.rank ?? null, null),
@@ -188,4 +190,91 @@ export async function inviteMember(_prev: unknown, form: FormData): Promise<{ st
   if (error) return { status: "error" };
   revalidatePath("/", "layout");
   return { status: "ok" };
+}
+
+// ---------------------------------------------------------------------------
+// subtasks, comments, attachments, followers, notifications (M2a)
+// ---------------------------------------------------------------------------
+
+/** Ticks or unticks a subtask: moves it to the workflow's first 'done' status or back to its first status. */
+export async function toggleSubtask(id: string, done: boolean): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: task } = await supabase.from("tasks").select("project_id, projects(workflow_id)").eq("id", id).maybeSingle();
+  const wf = (task as unknown as { projects: { workflow_id: string } } | null)?.projects.workflow_id;
+  if (!wf) return { ok: false, error: "forbidden" };
+  let q = supabase.from("workflow_statuses").select("id").eq("workflow_id", wf).order("rank").limit(1);
+  if (done) q = q.eq("category", "done");
+  const { data: status } = await q.maybeSingle();
+  if (!status) return { ok: false, error: "generic" };
+  const { data, error } = await supabase.from("tasks").update({ status_id: status.id }).eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function addComment(taskId: string, text: string, mentions: string[]): Promise<ActionResult> {
+  text = text.trim();
+  if (!text || text.length > 10000) return { ok: false, error: "generic" };
+  const ids = [...new Set(mentions)].filter((m) => /^[0-9a-f-]{36}$/.test(m)).slice(0, 50);
+  const supabase = await createClient();
+  const { error } = await supabase.from("comments").insert({ task_id: taskId, body: { text, mentions: ids } });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteComment(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("comments").delete().eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/** Records a file the browser already uploaded to Storage (the storage policy checked the upload). */
+export async function recordAttachment(taskId: string, path: string, fileName: string, mime: string, size: number): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: task } = await supabase.from("tasks").select("project_id").eq("id", taskId).maybeSingle();
+  if (!task || !path.startsWith(`${task.project_id}/${taskId}/`)) return { ok: false, error: "forbidden" };
+  const { error } = await supabase.from("attachments").insert({
+    task_id: taskId, storage_path: path, file_name: fileName.slice(0, 255), mime_type: mime || "application/octet-stream", size_bytes: size,
+  });
+  if (error) {
+    await supabase.storage.from("attachments").remove([path]);
+    return { ok: false, error: toActionError(error) };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteAttachment(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("attachments").delete().eq("id", id).select("storage_path");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  await supabase.storage.from("attachments").remove([data[0].storage_path]);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function setFollowing(taskId: string, follow: boolean): Promise<ActionResult> {
+  const session = await getSession();
+  if (!session) return { ok: false, error: "forbidden" };
+  const supabase = await createClient();
+  const { error } = follow
+    ? await supabase.from("followers").upsert({ task_id: taskId, user_id: session.userId }, { ignoreDuplicates: true })
+    : await supabase.from("followers").delete().eq("task_id", taskId).eq("user_id", session.userId);
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function markAllNotificationsRead(): Promise<void> {
+  const session = await getSession();
+  if (!session) return;
+  const supabase = await createClient();
+  await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", session.userId).is("read_at", null);
+  revalidatePath("/", "layout");
 }
