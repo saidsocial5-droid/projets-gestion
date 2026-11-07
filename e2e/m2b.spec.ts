@@ -27,7 +27,7 @@ test("M2b guests and roles: invite by email, see one project only, role change, 
 
   // invite the partner to the shared project only; the email goes out immediately
   const since = Date.now();
-  await a.getByRole("link", { name: "الإعدادات" }).click();
+  await a.getByRole("link", { name: "الإعدادات" }).last().click();
   await a.getByLabel("دعوة ضيف (شريك، مانح…) بالبريد").fill(guest);
   await a.getByRole("button", { name: "دعوة", exact: true }).click();
   await expect(a.getByRole("status")).toHaveText("أرسلنا الدعوة");

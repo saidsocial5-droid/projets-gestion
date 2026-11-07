@@ -25,7 +25,8 @@ test("M2d funding: donor, budget, indicator, expense, donor report (print + Exce
   await a.getByRole("button", { name: "+ مشروع جديد" }).click();
   await a.locator('input[name="name"]').fill(project);
   await a.getByRole("button", { name: "إنشاء" }).click();
-  await a.getByRole("link", { name: "الإعدادات" }).click();
+  await expect(a).toHaveURL(/\/list$/);
+  await a.getByRole("link", { name: "الإعدادات" }).last().click();
   await a.getByLabel("المانح").selectOption({ label: donor });
   await a.getByLabel(/^الميزانية/).fill("50 000");
   await a.getByRole("button", { name: "حفظ" }).click();

@@ -18,7 +18,7 @@ test("M1 vertical slice: sign in, create, move, workflow refusal, second user, F
   await expect(a.getByRole("heading", { level: 1 })).toContainText("مرحباً");
 
   // invite the second person
-  await a.getByRole("link", { name: "الأعضاء" }).click();
+  await a.goto("/ar/settings/members");
   await a.locator('input[name="email"]').fill(member);
   await a.getByRole("button", { name: "دعوة" }).click();
   await expect(a.getByRole("status")).toHaveText("تمت الدعوة");

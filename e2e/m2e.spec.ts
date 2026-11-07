@@ -27,7 +27,7 @@ test("M2e workflow editor, search, profile", async ({ browser }) => {
   await expect(a.getByRole("link", { name: /جمع النفايات/ })).toBeVisible();
 
   // workflow: add a status, allow "To do" → new status, check the board
-  await a.getByRole("navigation").getByRole("link", { name: "سير العمل" }).click();
+  await a.goto("/ar/settings/workflow");
   const add = a.locator("form").filter({ has: a.getByRole("button", { name: "إضافة حالة" }) });
   await add.getByLabel("الاسم بالعربية").fill(waiting);
   await add.getByLabel("الاسم بالفرنسية").fill("Attente bailleur");
@@ -44,7 +44,7 @@ test("M2e workflow editor, search, profile", async ({ browser }) => {
   await expect(a.getByRole("region", { name: waiting, exact: true })).toBeVisible();
 
   // deleting a status moves its tasks (even against the transition rules)
-  await a.getByRole("navigation").getByRole("link", { name: "سير العمل" }).click();
+  await a.goto("/ar/settings/workflow");
   const todo = a.getByRole("listitem").filter({ has: a.getByText("للتنفيذ", { exact: true }) }).first();
   await todo.getByText(/حفظ \/ حذف/).click();
   await todo.getByRole("combobox").last().selectOption({ label: waiting });
