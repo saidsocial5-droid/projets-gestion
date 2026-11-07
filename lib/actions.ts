@@ -523,3 +523,74 @@ export async function createReport(_prev: unknown, form: FormData): Promise<Form
   revalidatePath("/", "layout");
   return { status: "ok", id: data.id };
 }
+
+// ---------------------------------------------------------------------------
+// workflow administration, profile (M2e)
+// ---------------------------------------------------------------------------
+
+const COLORS = ["gray", "blue", "amber", "green", "red"];
+const CATEGORIES = ["todo", "in_progress", "done"];
+
+export async function saveStatus(workflowId: string, id: string | null, _prev: unknown, form: FormData): Promise<FormResult> {
+  const nameAr = str(form, "name_ar");
+  const nameFr = str(form, "name_fr");
+  const color = str(form, "color");
+  const category = str(form, "category");
+  if (!nameAr || !nameFr || !COLORS.includes(color) || !CATEGORIES.includes(category)) return { status: "error" };
+  const supabase = await createClient();
+  let error;
+  if (id) {
+    ({ error } = await supabase.from("workflow_statuses").update({ name_ar: nameAr, name_fr: nameFr, color, category }).eq("id", id));
+  } else {
+    const { data: last } = await supabase.from("workflow_statuses").select("rank").eq("workflow_id", workflowId).order("rank", { ascending: false }).limit(1).maybeSingle();
+    ({ error } = await supabase.from("workflow_statuses").insert({ workflow_id: workflowId, name_ar: nameAr, name_fr: nameFr, color, category, rank: generateKeyBetween(last?.rank ?? null, null) }));
+  }
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+/** Moves a status one place up or down by giving it a rank between its new neighbours. */
+export async function moveStatus(workflowId: string, id: string, direction: -1 | 1): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data: list } = await supabase.from("workflow_statuses").select("id, rank").eq("workflow_id", workflowId).order("rank");
+  const rows = list ?? [];
+  const i = rows.findIndex((r) => r.id === id);
+  const j = i + direction;
+  if (i < 0 || j < 0 || j >= rows.length) return { ok: false, error: "generic" };
+  const before = direction === -1 ? rows[j - 1]?.rank ?? null : rows[j].rank;
+  const after = direction === -1 ? rows[j].rank : rows[j + 1]?.rank ?? null;
+  const { error } = await supabase.from("workflow_statuses").update({ rank: generateKeyBetween(before, after) }).eq("id", id);
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function removeStatus(id: string, moveTo: string): Promise<ActionResult | { ok: false; error: "min_statuses" }> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("delete_status", { p_status: id, p_move_to: moveTo });
+  if (error?.hint === "min_statuses") return { ok: false, error: "min_statuses" };
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function saveTransitions(workflowId: string, restrict: boolean, pairs: { from: string | null; to: string }[]): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_transitions", { p_workflow: workflowId, p_restrict: restrict, p_pairs: pairs.map((p) => ({ from: p.from ?? "", to: p.to })) });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function updateProfile(_prev: unknown, form: FormData): Promise<FormResult & { locale?: string }> {
+  const session = await getSession();
+  const name = str(form, "full_name");
+  const locale = str(form, "locale") === "fr" ? "fr" : "ar";
+  if (!session || !name || name.length > 120) return { status: "error" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("profiles").update({ full_name: name, locale }).eq("id", session.userId);
+  if (error) return { status: "error" };
+  revalidatePath("/", "layout");
+  return { status: "ok", locale };
+}

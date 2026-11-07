@@ -1,58 +1,58 @@
 feature,area,priority,original,clone,notes
-Invite-only sign-in by email,auth,must,Asana,no,S01 R11
-Accept invite link,auth,must,Asana,no,S01 F08
-Workspace roles admin/member/guest,permissions,must,Asana,no,S19 R13
-Project roles admin/editor/commenter/viewer,permissions,must,Asana,no,S16 R11
-Project privacy private/team/workspace,permissions,must,Asana,no,S16
-Guests see only shared projects,permissions,must,Asana,no,F08 R12 donors/partners
+Invite-only sign-in by email,auth,must,Asana,yes,S01 R11
+Accept invite link,auth,must,Asana,yes,S01 F08
+Workspace roles admin/member/guest,permissions,must,Asana,yes,S19 R13
+Project roles admin/editor/commenter/viewer,permissions,must,Asana,yes,S16 R11
+Project privacy private/team/workspace,permissions,must,Asana,partial,S16 | private/workspace (no teams)
+Guests see only shared projects,permissions,must,Asana,yes,F08 R12 donors/partners
 Teams,org,could,Asana,no,optional for a small association
-Home page summary,navigation,must,Asana,no,S02
-My tasks grouped by due date,tasks,must,Asana,no,S03
-Inbox notifications,notifications,must,Asana,no,S04
+Home page summary,navigation,must,Asana,yes,S02
+My tasks grouped by due date,tasks,must,Asana,yes,S03
+Inbox notifications,notifications,must,Asana,yes,S04
 Email notifications digest,notifications,should,both,no,
-Project list with status and progress,projects,must,Asana,no,S05
+Project list with status and progress,projects,must,Asana,yes,S05
 Create project from template,projects,should,both,no,S06 AFMI templates written in-house
 Archive project,projects,should,both,no,
-Sections in project,projects,must,Asana,no,S07
-List view with field columns,views,must,Asana,no,S07
-Inline edit in list,views,should,Asana,no,S07
-Board view columns = workflow statuses,views,must,Jira,no,S08 R15
-Drag card = workflow transition,views,must,Jira,no,F04 R15
+Sections in project,projects,must,Asana,yes,S07
+List view with field columns,views,must,Asana,yes,S07
+Inline edit in list,views,should,Asana,partial,S07 | edit in side panel
+Board view columns = workflow statuses,views,must,Jira,yes,S08 R15
+Drag card = workflow transition,views,must,Jira,yes,F04 R15
 Timeline / Gantt view,views,should,Asana,no,S10 R9
 Calendar view,views,could,Asana,no,S11
-Task create / edit / delete,tasks,must,both,no,S09
-Assignee and due date,tasks,must,both,no,S09
+Task create / edit / delete,tasks,must,both,yes,S09
+Assignee and due date,tasks,must,both,yes,S09
 Start date,tasks,should,both,no,
-Priority,tasks,must,both,no,
-Rich text description,tasks,must,both,no,
-Subtasks,tasks,must,Asana,no,R10
+Priority,tasks,must,both,yes,
+Rich text description,tasks,must,both,partial,plain text for now (Tiptap later)
+Subtasks,tasks,must,Asana,yes,R10
 Dependencies waiting on / blocking,tasks,should,Asana,no,R9
-Comments with @mentions,collaboration,must,both,no,S09
-Attachments,collaboration,must,both,no,S09
-Activity log per task,collaboration,must,both,no,
-Followers,collaboration,should,Asana,no,
+Comments with @mentions,collaboration,must,both,yes,S09
+Attachments,collaboration,must,both,yes,S09
+Activity log per task,collaboration,must,both,yes,
+Followers,collaboration,should,Asana,yes,
 Real-time updates between users,collaboration,could,both,no,hard part
-Custom workflows statuses + categories,workflow,must,Jira,no,S17 R14
-Allowed transitions,workflow,should,Jira,no,S17 R14
-Global transition to any status,workflow,could,Jira,no,R14
+Custom workflows statuses + categories,workflow,must,Jira,yes,S17 R14
+Allowed transitions,workflow,should,Jira,yes,S17 R14
+Global transition to any status,workflow,could,Jira,yes,R14
 Custom fields text/number/select/multi/date,fields,should,Asana,no,S18 R8
-Search,search,must,both,no,S20
-Filters and sort in views,search,must,both,no,
+Search,search,must,both,yes,S20
+Filters and sort in views,search,must,both,partial,sort by rank only; filters not yet
 Saved filters,search,could,Jira,no,
-Project status updates (5 states),reporting,must,Asana,no,S13 R5
+Project status updates (5 states),reporting,must,Asana,yes,S13 R5
 Status update templates,reporting,could,Asana,no,R5
-Charts embedded in status update,reporting,should,Asana,no,R5
-Project dashboard charts,reporting,must,Asana,no,S12 R2 R6
+Charts embedded in status update,reporting,should,Asana,partial,R5 | progress snapshot stored with each update
+Project dashboard charts,reporting,must,Asana,yes,S12 R2 R6
 Custom chart builder (group by + filters),reporting,should,Asana,no,R6
-Portfolio of all projects,reporting,must,Asana,no,S14 R3 paid tier in Asana
-Cross-project universal reporting,reporting,should,Asana,no,S15 R3
-Donor entity linked to project,afmi,must,none,no,AFMI addition
-Budget planned vs spent per project,afmi,should,none,no,AFMI addition guess
-Indicators target vs current,afmi,should,none,no,AFMI addition guess
-Donor report export PDF / Excel,afmi,must,none,no,F07 RTL PDF is hard
-Arabic RTL + French LTR UI,i18n,must,none,no,whole app
-Bilingual report output,i18n,could,none,no,
-Responsive mobile web,platform,must,both,no,
+Portfolio of all projects,reporting,must,Asana,yes,S14 R3 paid tier in Asana
+Cross-project universal reporting,reporting,should,Asana,yes,S15 R3
+Donor entity linked to project,afmi,must,none,yes,AFMI addition
+Budget planned vs spent per project,afmi,should,none,yes,AFMI addition guess
+Indicators target vs current,afmi,should,none,yes,AFMI addition guess
+Donor report export PDF / Excel,afmi,must,none,yes,F07 RTL PDF is hard
+Arabic RTL + French LTR UI,i18n,must,none,yes,whole app
+Bilingual report output,i18n,could,none,yes,
+Responsive mobile web,platform,must,both,yes,
 Rule-based automation,automation,could,both,no,paid tier in both
 Native mobile apps,platform,skip,both,no,out of scope - responsive web instead
 Integrations marketplace,integrations,skip,both,no,partner deals and network

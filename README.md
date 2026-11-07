@@ -11,7 +11,8 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 - [x] المرحلة 2: الهندسة — `replica/architecture.md`، `replica/schema.sql` (29 جدولاً، مُختبَر)
 - [ ] المرحلة 3: نظام التصميم
 - [x] المرحلة 4 / M1: النسخة الأولية — دخول برابط سحري، مشاريع، قائمة، لوحة بالسحب، سير عمل تفرضه القاعدة، دعوة عضو، عربية/فرنسية
-- [ ] M2: التعليقات، الإشعارات، الضيوف، لوحات المتابعة، تقارير المانحين
+- [x] M2: التعليقات والإشارات والمرفقات والإشعارات، الضيوف والأدوار، تحديثات الحالة ولوحة المتابعة والمحفظة، المانحون والميزانية والمؤشرات وتقارير المانحين (PDF/Excel)، محرّر سير العمل، البحث، الملف الشخصي
+- [ ] M3: الجدول الزمني (Gantt)، الحقول المخصصة، قوالب المشاريع، الأرشفة، الملخص اليومي بالبريد، التحديث اللحظي
 
 ## الملفات / Fichiers
 
@@ -69,3 +70,14 @@ npm run build && npx next start -H 127.0.0.1 -p 3000
 ```bash
 npx playwright test
 ```
+
+```bash
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/tests/membership.sql
+```
+
+## النشر / Mise en production
+
+1. أنشئ مشروعاً على Supabase (منطقة أوروبية) ثم: `npx supabase link` و`npx supabase db push`.
+2. في Supabase > Authentication > Emails: الصق القالب `supabase/templates/magic_link.html` لقالبي Magic Link وConfirm signup، وأضف عنوان الموقع إلى Redirect URLs.
+3. في Supabase > Authentication > SMTP: اربط مزوّد بريد (Resend مثلاً) بنطاق الجمعية.
+4. على Vercel: استورد المستودع وأضف `NEXT_PUBLIC_SUPABASE_URL` و`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.

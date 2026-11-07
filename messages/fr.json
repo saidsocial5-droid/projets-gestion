@@ -13,7 +13,10 @@
     "inbox": "Notifications",
     "portfolio": "Portefeuille",
     "donors": "Bailleurs",
-    "reports": "Rapports"
+    "reports": "Rapports",
+    "workflow": "Workflow",
+    "search": "Rechercher",
+    "profile": "Mon profil"
   },
   "login": {
     "title": "Connexion",
@@ -112,7 +115,8 @@
     "forbidden": "Vous n'avez pas le droit de faire cette action.",
     "conflict": "Quelqu'un d'autre a modifié cette tâche. Actualisez la page.",
     "generic": "Une erreur est survenue. Réessayez.",
-    "last_admin": "Il doit rester au moins un administrateur."
+    "last_admin": "Il doit rester au moins un administrateur.",
+    "min_statuses": "Un workflow doit garder au moins deux statuts."
   },
   "activity": {
     "task": {
@@ -324,5 +328,53 @@
     "health": "Statut",
     "project": "Projet",
     "total": "Total"
+  },
+  "workflow": {
+    "title": "Workflow",
+    "hint": "Les statuts par lesquels passe chaque tâche, et les transitions autorisées. Les statuts sont les colonnes du tableau.",
+    "statuses": "Statuts",
+    "nameAr": "Nom en arabe",
+    "nameFr": "Nom en français",
+    "color": "Couleur",
+    "category": "Catégorie",
+    "cat_todo": "À démarrer",
+    "cat_in_progress": "En cours",
+    "cat_done": "Terminé",
+    "color_gray": "Gris",
+    "color_blue": "Bleu",
+    "color_amber": "Orange",
+    "color_green": "Vert",
+    "color_red": "Rouge",
+    "save": "Enregistrer",
+    "add": "Ajouter un statut",
+    "up": "Monter",
+    "down": "Descendre",
+    "delete": "Supprimer",
+    "moveTo": "Déplacer ses tâches vers",
+    "confirmDelete": "Supprimer",
+    "min_statuses": "Un workflow doit garder au moins deux statuts.",
+    "transitions": "Transitions autorisées",
+    "restrict": "Restreindre les transitions (sinon toutes sont permises)",
+    "from": "De ↓ / Vers →",
+    "any": "Depuis n'importe quel statut",
+    "saveTransitions": "Enregistrer les transitions",
+    "saved": "Enregistré"
+  },
+  "search": {
+    "title": "Rechercher",
+    "placeholder": "Rechercher dans les tâches et projets…",
+    "tasks": "Tâches",
+    "projects": "Projets",
+    "none": "Aucun résultat pour « {q} ».",
+    "hint": "Tapez au moins deux caractères du titre."
+  },
+  "profile": {
+    "title": "Mon profil",
+    "name": "Nom affiché",
+    "nameHint": "C'est ainsi que les autres vous voient dans les assignations, commentaires et mentions.",
+    "language": "Langue de l'interface",
+    "email": "E-mail",
+    "save": "Enregistrer",
+    "saved": "Enregistré"
   }
 }
