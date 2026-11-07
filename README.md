@@ -10,7 +10,8 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 - [x] المرحلة 1: الاستطلاع (recon) — `replica/recon.md`، `replica/features.csv`
 - [x] المرحلة 2: الهندسة — `replica/architecture.md`، `replica/schema.sql` (29 جدولاً، مُختبَر)
 - [ ] المرحلة 3: نظام التصميم
-- [ ] المرحلة 4: البناء
+- [x] المرحلة 4 / M1: النسخة الأولية — دخول برابط سحري، مشاريع، قائمة، لوحة بالسحب، سير عمل تفرضه القاعدة، دعوة عضو، عربية/فرنسية
+- [ ] M2: التعليقات، الإشعارات، الضيوف، لوحات المتابعة، تقارير المانحين
 
 ## الملفات / Fichiers
 
@@ -28,4 +29,43 @@ Plateforme web interne de l'AFMI (Association Forêt Modèle d'Ifrane) pour gér
 ```bash
 createdb t
 psql -d t -f replica/tests/supabase-stub.sql -f replica/schema.sql -f replica/tests/schema.test.sql
+```
+
+## التشغيل محلياً / Lancer en local
+
+المتطلبات: Node 22، Docker.
+
+```bash
+npm install
+```
+
+```bash
+npx supabase start
+```
+
+```bash
+cp .env.example .env.local
+```
+
+ضع في `.env.local` قيمة `PUBLISHABLE_KEY` التي يطبعها `npx supabase status`، ثم:
+
+```bash
+npm run dev
+```
+
+افتح http://127.0.0.1:3000 وسجّل الدخول ببريدك. أول شخص يدخل يصبح مسؤول مساحة العمل.
+رسائل البريد المحلية تظهر في Mailpit: http://127.0.0.1:54324
+
+## الاختبارات / Tests
+
+```bash
+npx supabase db reset
+```
+
+```bash
+npm run build && npx next start -H 127.0.0.1 -p 3000
+```
+
+```bash
+npx playwright test
 ```

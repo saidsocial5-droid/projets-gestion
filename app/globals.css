@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --color-brand-50: #eef7f1;
+  --color-brand-100: #d5ecdc;
+  --color-brand-500: #2f8a52;
+  --color-brand-600: #23703f;
+  --color-brand-700: #1b5631;
+  --color-brand-900: #0f2f1c;
+}
+
+:root {
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --text: #1c1f1a;
+  --muted: #5d6459;
+  --border: #e3e5de;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121512;
+    --surface: #1b1f1b;
+    --text: #e9ece6;
+    --muted: #a3aa9f;
+    --border: #2e342d;
+    color-scheme: dark;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+@utility surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+@utility text-muted {
+  color: var(--muted);
+}
+@utility border-line {
+  border-color: var(--border);
+}
+
+@utility input {
+  @apply w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-500;
+  background: var(--surface);
+  border-color: var(--border);
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-700;
+}
+@utility btn-ghost {
+  @apply btn hover:bg-black/5 dark:hover:bg-white/10;
+}

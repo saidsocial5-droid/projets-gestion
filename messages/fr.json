@@ -1,0 +1,79 @@
+{
+  "app": { "name": "Projets AFMI", "tagline": "Gestion des projets de l'Association Forêt Modèle d'Ifrane" },
+  "nav": { "projects": "Projets", "members": "Membres", "signOut": "Déconnexion", "language": "العربية" },
+  "login": {
+    "title": "Connexion",
+    "email": "Adresse e-mail",
+    "submit": "Recevoir le lien de connexion",
+    "sent": "Lien envoyé. Ouvrez-le depuis ce navigateur.",
+    "error": "Impossible d'envoyer le lien. Réessayez.",
+    "inviteOnly": "Accès sur invitation uniquement."
+  },
+  "noAccess": {
+    "title": "Pas encore d'accès",
+    "body": "Votre compte n'est pas ajouté à l'espace de l'association. Demandez à un administrateur de vous inviter avec cette adresse :",
+    "retry": "Réessayer"
+  },
+  "projects": {
+    "title": "Projets",
+    "empty": "Aucun projet pour l'instant. Créez le premier.",
+    "new": "Nouveau projet",
+    "name": "Nom du projet",
+    "privacy": "Visibilité",
+    "privacyWorkspace": "Tous les membres",
+    "privacyPrivate": "Privé (invités seulement)",
+    "dueDate": "Date de fin",
+    "create": "Créer",
+    "tasks": "{done} sur {total} tâches terminées",
+    "overdue": "{count} en retard",
+    "defaultSection": "Tâches"
+  },
+  "project": {
+    "list": "Liste",
+    "board": "Tableau",
+    "addTask": "Ajouter une tâche…",
+    "addSection": "Nouvelle section…",
+    "emptySection": "Aucune tâche dans cette section.",
+    "emptyColumn": "Glissez une tâche ici"
+  },
+  "task": {
+    "title": "Titre",
+    "status": "Statut",
+    "assignee": "Responsable",
+    "unassigned": "Non assignée",
+    "dueDate": "Échéance",
+    "priority": "Priorité",
+    "priorityNone": "—",
+    "priority_low": "Basse",
+    "priority_medium": "Moyenne",
+    "priority_high": "Haute",
+    "priority_urgent": "Urgente",
+    "description": "Description",
+    "save": "Enregistrer",
+    "saved": "Enregistré",
+    "delete": "Supprimer la tâche",
+    "confirmDelete": "Supprimer définitivement cette tâche ?",
+    "close": "Fermer",
+    "overdue": "En retard",
+    "done": "Terminée"
+  },
+  "members": {
+    "title": "Membres de l'association",
+    "invite": "Inviter un membre",
+    "email": "Adresse e-mail",
+    "role": "Rôle",
+    "role_admin": "Administrateur",
+    "role_member": "Membre",
+    "role_guest": "Invité",
+    "send": "Inviter",
+    "pending": "Invitations en attente",
+    "pendingHint": "La personne obtient l'accès à sa première connexion avec cette adresse.",
+    "invited": "Invitation enregistrée"
+  },
+  "errors": {
+    "transition_not_allowed": "Cette transition n'est pas autorisée par le workflow.",
+    "forbidden": "Vous n'avez pas le droit de faire cette action.",
+    "conflict": "Quelqu'un d'autre a modifié cette tâche. Actualisez la page.",
+    "generic": "Une erreur est survenue. Réessayez."
+  }
+}
