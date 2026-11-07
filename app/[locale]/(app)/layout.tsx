@@ -43,12 +43,7 @@ export default async function AppLayout({ children, params }: { children: React.
               <Link href="/donors" className="btn-ghost">{t("donors")}</Link>
             </>
           )}
-          {session!.role === "admin" && (
-            <>
-              <Link href="/settings/members" className="btn-ghost">{t("members")}</Link>
-              <Link href="/settings/workflow" className="btn-ghost">{t("workflow")}</Link>
-            </>
-          )}
+          {session!.role === "admin" && <Link href="/settings" className="btn-ghost">{t("settings")}</Link>}
         </nav>
         <div className="ms-auto flex items-center gap-1 text-sm">
           <form action={`/${locale}/search`} role="search" className="hidden md:block">

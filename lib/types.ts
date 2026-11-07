@@ -53,3 +53,22 @@ export interface Project {
   color: string;
   workflow_id: string;
 }
+
+export type FieldType = "text" | "number" | "single_select" | "multi_select" | "date";
+
+export interface FieldOption {
+  id: string;
+  label: string;
+  color: string;
+  rank: string;
+}
+
+export interface CustomField {
+  id: string;
+  name: string;
+  type: FieldType;
+  options: FieldOption[];
+}
+
+/** text: string · number: number · date: "YYYY-MM-DD" · single_select: option id · multi_select: option ids */
+export type FieldValue = string | number | string[];

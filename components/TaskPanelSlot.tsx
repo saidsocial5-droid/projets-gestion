@@ -3,6 +3,7 @@ import { TaskSubtasks } from "./TaskSubtasks";
 import { TaskAttachments } from "./TaskAttachments";
 import { TaskConversation } from "./TaskConversation";
 import { TaskDependencies } from "./TaskDependencies";
+import { TaskFields } from "./TaskFields";
 import { allowedTargets } from "@/lib/status";
 import { getTaskDetail } from "@/lib/task-detail";
 import { getSession } from "@/lib/session";
@@ -17,6 +18,7 @@ export async function TaskPanelSlot({ data, taskId }: { data: ProjectData; taskI
   const allowed = [...allowedTargets(task.status_id, data.restrict, data.statuses, data.transitions)];
   return (
     <TaskPanel key={task.id} task={task} statuses={data.statuses} allowed={allowed} people={data.people} canEdit={data.canEdit} following={detail.following}>
+      <TaskFields key={task.updated_at} taskId={task.id} fields={data.fields} values={Object.fromEntries(data.values.get(task.id) ?? [])} canEdit={data.canEdit} />
       <TaskSubtasks parent={task} subtasks={detail.subtasks} canEdit={data.canEdit} />
       <TaskDependencies
         task={task}

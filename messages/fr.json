@@ -16,7 +16,9 @@
     "reports": "Rapports",
     "workflow": "Workflow",
     "search": "Rechercher",
-    "profile": "Mon profil"
+    "profile": "Mon profil",
+    "fields": "Champs",
+    "settings": "Paramètres"
   },
   "login": {
     "title": "Connexion",
@@ -399,5 +401,50 @@
     "blocked": "Bloquée",
     "blockedBy": "Bloquée par : {tasks}",
     "remove": "Retirer"
+  },
+  "fields": {
+    "title": "Champs personnalisés",
+    "hint": "Des champs en plus sur les tâches, comme « Lieu » ou « Nombre de bénéficiaires ». Créez-les ici puis activez-les dans les paramètres de chaque projet.",
+    "new": "Nouveau champ",
+    "name": "Nom du champ",
+    "type": "Type",
+    "type_text": "Texte",
+    "type_number": "Nombre",
+    "type_single_select": "Choix unique",
+    "type_multi_select": "Choix multiples",
+    "type_date": "Date",
+    "options": "Options (séparées par des virgules)",
+    "optionsRequired": "Ajoutez au moins une option.",
+    "create": "Créer",
+    "addOption": "Nouvelle option…",
+    "delete": "Supprimer le champ",
+    "confirmDelete": "Supprimer ce champ et toutes ses valeurs dans tous les projets ?",
+    "empty": "Aucun champ pour l'instant.",
+    "inProject": "Champs de ce projet",
+    "inProjectHint": "Choisissez les champs affichés sur les tâches de ce projet.",
+    "manage": "Gérer les champs",
+    "none": "—"
+  },
+  "filters": {
+    "title": "Filtrer",
+    "status": "Statut",
+    "assignee": "Responsable",
+    "due": "Échéance",
+    "any": "Tous",
+    "me": "Moi",
+    "unassigned": "Non assignée",
+    "overdue": "En retard",
+    "week": "Cette semaine",
+    "noDate": "Sans date",
+    "hideDone": "Masquer les terminées",
+    "apply": "Appliquer",
+    "clear": "Effacer",
+    "count": "{shown} sur {total} tâches"
+  },
+  "settingsHub": {
+    "title": "Paramètres",
+    "members": "Inviter membres et invités, gérer les rôles",
+    "workflow": "Statuts et transitions autorisées",
+    "fields": "Champs supplémentaires sur les tâches"
   }
 }

@@ -617,3 +617,83 @@ export async function removeDependency(taskId: string, dependsOn: string): Promi
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+// ---------------------------------------------------------------------------
+// custom fields (M3b)
+// ---------------------------------------------------------------------------
+
+const FIELD_TYPES = ["text", "number", "single_select", "multi_select", "date"];
+
+export async function createField(_prev: unknown, form: FormData): Promise<FormResult> {
+  const session = await getSession();
+  const name = str(form, "name");
+  const type = str(form, "type");
+  if (!session || !name || name.length > 100 || !FIELD_TYPES.includes(type)) return { status: "error" };
+  const options = str(form, "options").split(/[\n,،]/).map((o) => o.trim()).filter(Boolean).slice(0, 50);
+  if (type.endsWith("select") && !options.length) return { status: "error", message: "options_required" };
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("custom_fields").insert({ workspace_id: session.workspaceId, name, type }).select("id").single();
+  if (error) return { status: "error" };
+  if (options.length && type.endsWith("select")) {
+    let rank: string | null = null;
+    const rows = options.map((label) => ({ field_id: data.id, label, rank: (rank = generateKeyBetween(rank, null)) }));
+    await supabase.from("custom_field_options").insert(rows);
+  }
+  revalidatePath("/", "layout");
+  return { status: "ok" };
+}
+
+export async function addFieldOption(fieldId: string, label: string): Promise<ActionResult> {
+  label = label.trim();
+  if (!label) return { ok: false, error: "generic" };
+  const supabase = await createClient();
+  const { data: last } = await supabase.from("custom_field_options").select("rank").eq("field_id", fieldId).order("rank", { ascending: false }).limit(1).maybeSingle();
+  const { error } = await supabase.from("custom_field_options").insert({ field_id: fieldId, label, rank: generateKeyBetween(last?.rank ?? null, null) });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteFieldOption(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("custom_field_options").delete().eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function deleteField(id: string): Promise<ActionResult> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("custom_fields").delete().eq("id", id).select("id");
+  if (error) return { ok: false, error: toActionError(error) };
+  if (!data.length) return { ok: false, error: "forbidden" };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function setProjectField(projectId: string, fieldId: string, attached: boolean): Promise<ActionResult> {
+  const supabase = await createClient();
+  if (attached) {
+    const { data: last } = await supabase.from("project_fields").select("rank").eq("project_id", projectId).order("rank", { ascending: false }).limit(1).maybeSingle();
+    const { error } = await supabase.from("project_fields").upsert({ project_id: projectId, field_id: fieldId, rank: generateKeyBetween(last?.rank ?? null, null) }, { ignoreDuplicates: true });
+    if (error) return { ok: false, error: toActionError(error) };
+  } else {
+    const { error } = await supabase.from("project_fields").delete().eq("project_id", projectId).eq("field_id", fieldId);
+    if (error) return { ok: false, error: toActionError(error) };
+  }
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/** Sets (or clears, with null / "" / []) one custom field value; the database validates the type. */
+export async function setFieldValue(taskId: string, fieldId: string, value: string | number | string[] | null): Promise<ActionResult> {
+  const supabase = await createClient();
+  const empty = value === null || value === "" || (Array.isArray(value) && value.length === 0) || (typeof value === "number" && !Number.isFinite(value));
+  const { error } = empty
+    ? await supabase.from("task_field_values").delete().eq("task_id", taskId).eq("field_id", fieldId)
+    : await supabase.from("task_field_values").upsert({ task_id: taskId, field_id: fieldId, value });
+  if (error) return { ok: false, error: toActionError(error) };
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

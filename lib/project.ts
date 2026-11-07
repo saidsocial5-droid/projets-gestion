@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient } from "./supabase/server";
-import type { Person, Project, Section, Status, Task, Transition } from "./types";
+import type { CustomField, FieldValue, Person, Project, Section, Status, Task, Transition } from "./types";
 
 export interface ProjectData {
   project: Project;
@@ -13,6 +13,9 @@ export interface ProjectData {
   canEdit: boolean;
   canAdmin: boolean;
   dependencies: { task_id: string; depends_on_task_id: string }[];
+  fields: CustomField[];
+  /** task id → field id → value */
+  values: Map<string, Map<string, FieldValue>>;
 }
 
 const TASK_COLS =
@@ -43,11 +46,24 @@ export async function getProjectData(id: string): Promise<ProjectData | null> {
   }
 
   const ids = (tasks.data ?? []).map((t) => t.id);
-  const { data: deps } = ids.length
-    ? await supabase.from("task_dependencies").select("task_id, depends_on_task_id").in("task_id", ids)
-    : { data: [] };
+  const [{ data: deps }, { data: pf }, { data: vals }] = await Promise.all([
+    ids.length ? supabase.from("task_dependencies").select("task_id, depends_on_task_id").in("task_id", ids) : Promise.resolve({ data: [] }),
+    supabase.from("project_fields").select("rank, field:custom_fields(id, name, type, options:custom_field_options(id, label, color, rank))").eq("project_id", id).order("rank"),
+    ids.length ? supabase.from("task_field_values").select("task_id, field_id, value").in("task_id", ids) : Promise.resolve({ data: [] }),
+  ]);
+  const fields = ((pf ?? []) as unknown as { field: CustomField }[]).map((r) => ({
+    ...r.field,
+    options: [...r.field.options].sort((a, b) => (a.rank < b.rank ? -1 : 1)),
+  }));
+  const values = new Map<string, Map<string, FieldValue>>();
+  for (const v of (vals ?? []) as { task_id: string; field_id: string; value: FieldValue }[]) {
+    if (!values.has(v.task_id)) values.set(v.task_id, new Map());
+    values.get(v.task_id)!.set(v.field_id, v.value);
+  }
 
   return {
+    fields,
+    values,
     dependencies: (deps ?? []) as { task_id: string; depends_on_task_id: string }[],
     project: project as Project,
     restrict: wf.data?.restrict_transitions ?? false,
