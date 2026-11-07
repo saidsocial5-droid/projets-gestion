@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { updateProfile } from "@/lib/actions";
 
-export function ProfileForm({ name, locale, email }: { name: string; locale: string; email: string }) {
+export function ProfileForm({ name, locale, email, notify }: { name: string; locale: string; email: string; notify: boolean }) {
   const t = useTranslations();
   const router = useRouter();
   const [state, action, pending] = useActionState(updateProfile, { status: "idle" } as { status: "idle" | "ok" | "error"; locale?: string });
@@ -22,6 +22,10 @@ export function ProfileForm({ name, locale, email }: { name: string; locale: str
       <label className="block space-y-1">
         <span className="text-sm font-medium">{t("profile.language")}</span>
         <select name="locale" defaultValue={locale} className="input"><option value="ar">العربية</option><option value="fr">Français</option></select>
+      </label>
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" name="notify_email" defaultChecked={notify} className="accent-[var(--color-brand-600)]" />
+        {t("profile.digest")}
       </label>
       <p className="text-sm"><span className="text-muted">{t("profile.email")}: </span><span dir="ltr">{email}</span></p>
       <div className="flex items-center gap-3">

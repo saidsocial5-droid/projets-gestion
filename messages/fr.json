@@ -380,7 +380,8 @@
     "language": "Langue de l'interface",
     "email": "E-mail",
     "save": "Enregistrer",
-    "saved": "Enregistré"
+    "saved": "Enregistré",
+    "digest": "M'envoyer un résumé quotidien par e-mail (échéances et nouveautés) le matin"
   },
   "timeline": {
     "unscheduled": "Tâches sans dates",

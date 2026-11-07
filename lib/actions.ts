@@ -592,7 +592,7 @@ export async function updateProfile(_prev: unknown, form: FormData): Promise<For
   const locale = str(form, "locale") === "fr" ? "fr" : "ar";
   if (!session || !name || name.length > 120) return { status: "error" };
   const supabase = await createClient();
-  const { error } = await supabase.from("profiles").update({ full_name: name, locale }).eq("id", session.userId);
+  const { error } = await supabase.from("profiles").update({ full_name: name, locale, notify_email: form.get("notify_email") === "on" }).eq("id", session.userId);
   if (error) return { status: "error" };
   revalidatePath("/", "layout");
   return { status: "ok", locale };
