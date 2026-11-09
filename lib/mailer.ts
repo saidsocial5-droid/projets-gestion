@@ -1,4 +1,5 @@
 import "server-only";
+import nodemailer from "nodemailer";
 
 export interface Mail {
   to: string;
@@ -7,8 +8,11 @@ export interface Mail {
 }
 
 /**
- * Sends one email. Resend in production (RESEND_API_KEY); the local Mailpit
- * inbox in development (MAILPIT_URL). Returns false if no transport is set.
+ * Sends one email through the first transport that is configured:
+ *  1. Resend API (RESEND_API_KEY) — free tier, needs the association's domain;
+ *  2. any SMTP server (SMTP_HOST…) — e.g. a free Gmail account with an app password;
+ *  3. the local Mailpit inbox (MAILPIT_URL) in development.
+ * Returns false if none is set or sending failed.
  */
 export async function sendMail(mail: Mail): Promise<boolean> {
   const from = process.env.MAIL_FROM ?? "AFMI <noreply@afmi.local>";
@@ -19,6 +23,22 @@ export async function sendMail(mail: Mail): Promise<boolean> {
       body: JSON.stringify({ from, to: [mail.to], subject: mail.subject, html: mail.html }),
     });
     return res.ok;
+  }
+  if (process.env.SMTP_HOST) {
+    const port = Number(process.env.SMTP_PORT ?? 465);
+    const transport = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port,
+      secure: port === 465,
+      auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined,
+    });
+    try {
+      await transport.sendMail({ from, to: mail.to, subject: mail.subject, html: mail.html });
+      return true;
+    } catch (e) {
+      console.error("smtp send failed", e instanceof Error ? e.message : e);
+      return false;
+    }
   }
   if (process.env.MAILPIT_URL) {
     const m = from.match(/^(.*)<(.+)>$/);

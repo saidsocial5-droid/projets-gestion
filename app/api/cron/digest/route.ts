@@ -4,7 +4,7 @@ import { runDigest } from "@/lib/digest";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-/** Daily digest. Vercel Cron calls it with "Authorization: Bearer $CRON_SECRET" (see vercel.json). */
+/** Daily digest. The GitHub Actions workflow .github/workflows/daily-digest.yml calls it with "Authorization: Bearer $CRON_SECRET". */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {

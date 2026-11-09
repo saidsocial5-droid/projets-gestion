@@ -78,9 +78,11 @@ psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/tests
 
 ## النشر / Mise en production
 
-الدليل الكامل خطوة بخطوة، من المتصفح فقط: **[docs/deploy-ar.md](docs/deploy-ar.md)**. الملخص:
+**مجاناً بالكامل**: Supabase Free + Netlify Free + Gmail (أو Resend) + GitHub Actions. الدليل خطوة بخطوة، من المتصفح فقط: **[docs/deploy-ar.md](docs/deploy-ar.md)**.
 
-1. أنشئ مشروعاً على Supabase (منطقة أوروبية)، ثم شغّل `supabase/setup.sql` في SQL Editor بعد وضع بريد أول مسؤول في آخر سطر (أو بالأوامر: `npx supabase link` ثم `npx supabase db push`، ثم أضف البريد إلى جدول `bootstrap_admins`).
-2. في Supabase > Authentication > Emails: الصق القالب `supabase/templates/magic_link.html` لقالبي Magic Link وConfirm signup، وأضف عنوان الموقع إلى Redirect URLs.
-3. في Supabase > Authentication > SMTP: اربط مزوّد بريد (Resend مثلاً) بنطاق الجمعية.
-4. على Vercel: استورد المستودع وأضف `NEXT_PUBLIC_SUPABASE_URL` و`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`، ثم للملخص اليومي: `SUPABASE_SECRET_KEY` و`CRON_SECRET` و`RESEND_API_KEY` و`MAIL_FROM` (انظر `.env.example`). الجدولة في `vercel.json`.
+1. Supabase: شغّل `supabase/setup.sql` في SQL Editor بعد وضع بريد أول مسؤول في آخر سطر.
+2. Supabase Auth: SMTP (Gmail أو Resend)، قالب `supabase/templates/magic_link.html`، وعنوان الموقع في URL Configuration.
+3. Netlify: استورد المستودع وأضف المتغيرات المذكورة في `.env.example`.
+4. GitHub Actions: أضف `APP_URL` و`CRON_SECRET` (الملخص اليومي)، و`SUPABASE_DB_URL` و`BACKUP_PASSPHRASE` (النسخ الاحتياطي الأسبوعي المشفّر).
+
+بعد إضافة ملف هجرة جديد، أعد توليد الملف الموحّد: `npm run db:setup-sql`.
