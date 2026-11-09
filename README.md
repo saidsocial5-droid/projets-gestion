@@ -78,7 +78,9 @@ psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/tests
 
 ## النشر / Mise en production
 
-1. أنشئ مشروعاً على Supabase (منطقة أوروبية) ثم: `npx supabase link` و`npx supabase db push`.
+الدليل الكامل خطوة بخطوة، من المتصفح فقط: **[docs/deploy-ar.md](docs/deploy-ar.md)**. الملخص:
+
+1. أنشئ مشروعاً على Supabase (منطقة أوروبية)، ثم شغّل `supabase/setup.sql` في SQL Editor بعد وضع بريد أول مسؤول في آخر سطر (أو بالأوامر: `npx supabase link` ثم `npx supabase db push`، ثم أضف البريد إلى جدول `bootstrap_admins`).
 2. في Supabase > Authentication > Emails: الصق القالب `supabase/templates/magic_link.html` لقالبي Magic Link وConfirm signup، وأضف عنوان الموقع إلى Redirect URLs.
 3. في Supabase > Authentication > SMTP: اربط مزوّد بريد (Resend مثلاً) بنطاق الجمعية.
 4. على Vercel: استورد المستودع وأضف `NEXT_PUBLIC_SUPABASE_URL` و`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`، ثم للملخص اليومي: `SUPABASE_SECRET_KEY` و`CRON_SECRET` و`RESEND_API_KEY` و`MAIL_FROM` (انظر `.env.example`). الجدولة في `vercel.json`.

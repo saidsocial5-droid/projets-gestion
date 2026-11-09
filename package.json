@@ -10,7 +10,8 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > lib/database.types.ts",
-    "test:e2e": "supabase db reset && playwright test"
+    "test:e2e": "supabase db reset && playwright test",
+    "db:setup-sql": "node scripts/build-setup-sql.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
