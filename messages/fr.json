@@ -23,10 +23,16 @@
   "login": {
     "title": "Connexion",
     "email": "Adresse e-mail",
-    "submit": "Recevoir le lien de connexion",
-    "sent": "Lien envoyé. Ouvrez l'e-mail et cliquez sur le lien.",
+    "submit": "Recevoir un code de connexion",
+    "sent": "Nous avons envoyé un code à 6 chiffres à votre adresse. Saisissez-le ici :",
     "error": "Impossible d'envoyer le lien. Réessayez.",
-    "inviteOnly": "Accès sur invitation uniquement."
+    "inviteOnly": "Accès sur invitation uniquement.",
+    "code": "Code de connexion",
+    "verify": "Se connecter",
+    "badCode": "Code incorrect ou expiré.",
+    "haveCode": "J'ai déjà un code",
+    "resend": "Renvoyer un code",
+    "changeEmail": "Changer d'adresse"
   },
   "noAccess": {
     "title": "Pas encore d'accès",

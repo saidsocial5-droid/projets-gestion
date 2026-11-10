@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { generateKeyBetween } from "fractional-indexing";
 import { createClient } from "./supabase/server";
 import { getSession } from "./session";
@@ -20,7 +21,7 @@ function str(form: FormData, key: string): string {
 // auth
 // ---------------------------------------------------------------------------
 
-export async function sendMagicLink(_prev: unknown, form: FormData): Promise<{ status: "idle" | "sent" | "error" }> {
+export async function sendMagicLink(_prev: unknown, form: FormData): Promise<{ status: "idle" | "sent" | "error"; email?: string }> {
   const email = str(form, "email").toLowerCase();
   const locale = str(form, "locale") === "fr" ? "fr" : "ar";
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { status: "error" };
@@ -30,7 +31,20 @@ export async function sendMagicLink(_prev: unknown, form: FormData): Promise<{ s
     email,
     options: { emailRedirectTo: `${origin}/auth/callback?locale=${locale}` },
   });
-  return { status: error ? "error" : "sent" };
+  return { status: error ? "error" : "sent", email };
+}
+
+/** Signs in with the 6-digit code from the email (works where links cannot, e.g. the desktop app). */
+export async function verifyLoginCode(_prev: unknown, form: FormData): Promise<{ status: "idle" | "error"; email?: string }> {
+  const email = str(form, "email").toLowerCase();
+  const token = str(form, "code").replace(/\D/g, "");
+  const locale = str(form, "locale") === "fr" ? "fr" : "ar";
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || token.length !== 6) return { status: "error", email };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+  if (error) return { status: "error", email };
+  const { data: workspaceId } = await supabase.rpc("bootstrap_or_join");
+  redirect(`/${locale}/${workspaceId ? "home" : "no-access"}`);
 }
 
 export async function signOut() {

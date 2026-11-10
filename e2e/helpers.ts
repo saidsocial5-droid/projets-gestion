@@ -19,12 +19,28 @@ export async function emailLink(email: string, since: number): Promise<string> {
   throw new Error(`no sign-in email for ${email}`);
 }
 
+/** Returns the 6-digit code from the newest sign-in email to `email` sent after `since`. */
+export async function emailCode(email: string, since: number): Promise<string> {
+  for (let i = 0; i < 30; i++) {
+    const res = await fetch(`${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`);
+    const { messages } = (await res.json()) as { messages: { ID: string; Created: string }[] };
+    const fresh = messages.find((m) => new Date(m.Created).getTime() >= since - 2000);
+    if (fresh) {
+      const msg = (await (await fetch(`${MAILPIT}/api/v1/message/${fresh.ID}`)).json()) as { HTML: string };
+      const code = msg.HTML.match(/letter-spacing: 8px[^>]*>\s*(\d{6})\s*</)?.[1];
+      if (code) return code;
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`no sign-in code for ${email}`);
+}
+
 /** Signs in through the real email-link flow, reading the email from the local Mailpit inbox. */
 export async function signIn(page: Page, email: string, locale = "ar") {
   const since = Date.now();
   await page.goto(`/${locale}/login`);
   await page.locator('input[name="email"]').fill(email);
-  await page.locator("form button").click();
+  await page.locator("form button:not([type=button])").click();
   await expect(page.getByRole("status")).toBeVisible();
   await page.goto(await emailLink(email, since));
 }

@@ -76,6 +76,10 @@ npx playwright test
 psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -f supabase/tests/membership.sql
 ```
 
+## برنامج سطح المكتب / Application de bureau
+
+برنامج Windows (وMac وLinux) يفتح المنصة في نافذته الخاصة دون متصفح: [docs/desktop-ar.md](docs/desktop-ar.md). الكود في `desktop/`، والبناء المجاني عبر GitHub Actions ← **Desktop app**.
+
 ## النشر / Mise en production
 
 **مجاناً بالكامل**: Supabase Free + Netlify Free + Gmail (أو Resend) + GitHub Actions. الدليل خطوة بخطوة، من المتصفح فقط: **[docs/deploy-ar.md](docs/deploy-ar.md)**.

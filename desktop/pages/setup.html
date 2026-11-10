@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'" />
+  <title>AFMI Projets</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <div class="logo" aria-hidden="true"></div>
+    <h1 id="title"></h1>
+    <p id="intro"></p>
+    <form id="form">
+      <label for="url" id="label"></label>
+      <input id="url" type="url" required placeholder="https://afmi-projets.netlify.app" autocomplete="url" />
+      <div class="error" id="error" role="alert"></div>
+      <button id="save" type="submit"></button>
+    </form>
+    <p class="hint" id="hint"></p>
+  </main>
+  <script src="setup.js"></script>
+</body>
+</html>

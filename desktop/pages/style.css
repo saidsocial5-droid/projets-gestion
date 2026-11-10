@@ -1,0 +1,15 @@
+:root { --bg: #fafaf7; --surface: #fff; --text: #1c1f1a; --muted: #5d6459; --border: #e3e5de; --brand: #23703f; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg: #121512; --surface: #1b1f1b; --text: #e9ece6; --muted: #a3aa9f; --border: #2e342d; color-scheme: dark; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--text); font: 15px/1.6 "Segoe UI", Tahoma, "Noto Sans Arabic", Arial, sans-serif; padding: 16px; }
+main { width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+.logo { width: 44px; height: 44px; border-radius: 10px; background: var(--brand); margin-bottom: 12px; }
+h1 { font-size: 20px; margin: 0 0 6px; }
+p { color: var(--muted); margin: 0 0 16px; }
+label { display: block; font-weight: 600; margin-bottom: 6px; }
+input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: var(--surface); color: var(--text); direction: ltr; text-align: left; }
+input:focus { outline: 2px solid var(--brand); }
+button { margin-top: 14px; width: 100%; padding: 10px; border: 0; border-radius: 8px; background: var(--brand); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+button:disabled { opacity: .6; }
+.error { color: #e11d48; margin-top: 10px; min-height: 1.4em; }
+.hint { font-size: 13px; margin-top: 14px; }

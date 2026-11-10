@@ -1,0 +1,58 @@
+# Builds the desktop app installers (free GitHub runners).
+# Actions > "Desktop app" > Run workflow, optionally with the platform address
+# so the app opens it directly (otherwise it asks on first launch).
+name: Desktop app
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Platform address, e.g. https://afmi-projets.netlify.app (optional)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win --x64
+            files: desktop/dist/*.exe
+          - os: macos-latest
+            target: --mac
+            files: desktop/dist/*.dmg
+          - os: ubuntu-latest
+            target: --linux AppImage
+            files: desktop/dist/*.AppImage
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci
+      - name: Bake in the platform address
+        shell: bash
+        env:
+          URL: ${{ inputs.url }}
+        run: |
+          node -e 'require("fs").writeFileSync("app-config.json", JSON.stringify({ url: (process.env.URL || "").replace(/\/+$/, "") }, null, 2))'
+      - run: npx electron-builder ${{ matrix.target }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false" # unsigned build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AFMI-Projets-${{ matrix.os }}
+          path: ${{ matrix.files }}
+          retention-days: 30
